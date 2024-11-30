@@ -12,6 +12,7 @@ import { App } from "./app/App";
 import { theme } from "../renderer/app/theme";
 import { store, persistor } from "./app/store";
 import { MemoryRouter } from "react-router-dom";
+import {StrictMode} from "react";
 
 import "./index.css";
 
@@ -31,7 +32,9 @@ root.render(
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <MemoryRouter>
-          <App />
+            <StrictMode>
+                <App />
+            </StrictMode>
         </MemoryRouter>
       </ThemeProvider>
     </PersistGate>
