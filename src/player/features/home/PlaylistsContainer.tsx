@@ -19,6 +19,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../app/store";
 import {Link as RouterLink, LinkProps as RouterLinkProps, useNavigate} from "react-router-dom";
 import {Sound} from "../soundboards/soundboardsSlice";
+import FormControl from "@mui/material/FormControl";
 
 const PlaylistsLink = React.forwardRef<
     HTMLAnchorElement,
@@ -61,7 +62,7 @@ export function PlaylistsContainer ({onPlayTrack, setPlaylistAddOpen}: Playlists
                 direction="row"
             >
                 <Typography variant="h5" component="div">
-                    <Link color="inherit" underline="none" component={PlaylistsLink}>Playlists</Link>
+                    <Link color="inherit" underline="hover" component={PlaylistsLink}>Playlists</Link>
 
                 </Typography>
                 <Tooltip title="Add Playlist">
@@ -70,22 +71,18 @@ export function PlaylistsContainer ({onPlayTrack, setPlaylistAddOpen}: Playlists
                     </IconButton>
                 </Tooltip>
                 <Box sx={{ flexGrow: 1 }} />
-                <Box>Showing:
+                Showing:
+                <FormControl size="small">
                     <Select
-                        labelId="playlistDisplayMaxSelectLabel"
                         id="playlistDisplayMaxSelect"
                         value={maxNumberOfPlaylistItems.toString()}
-                        label="Max Number of Playlist Items"
                         onChange={handlePlaylistDisplayOptionClick}
                     >
                         {maxNumberOfPlaylistItemsOptions.map((playlistOption) => (
                             <MenuItem value={playlistOption.value}>{playlistOption.displayName ?? playlistOption.value}</MenuItem>
                         ))}
                     </Select>
-                </Box>
-                <Link color="inherit" underline="hover" component={PlaylistsLink}>
-                    See All
-                </Link>
+                </FormControl>
             </Stack>
         </CardContent>
         <CardContent>

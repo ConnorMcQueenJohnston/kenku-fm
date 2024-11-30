@@ -22,6 +22,7 @@ import { SoundboardSounds } from "./SoundboardSounds";
 import { isBackground, backgrounds } from "../../backgrounds";
 import { useDrop } from "../../common/useDrop";
 import { useNavigate, useParams } from "react-router-dom";
+import {setBackground} from "../../app/appSlice";
 
 type SoundboardProps = {
   onPlay: (sound: Sound) => void;
@@ -42,6 +43,8 @@ export function Soundboard({ onPlay, onStop }: SoundboardProps) {
   const image = isBackground(soundboard.background)
     ? backgrounds[soundboard.background]
     : soundboard.background;
+
+  dispatch(setBackground(image));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
@@ -93,34 +96,22 @@ export function Soundboard({ onPlay, onStop }: SoundboardProps) {
           padding: "0px !important",
           display: "flex",
           flexDirection: "column",
-          height: "100vh",
+          height: "100vh"
         }}
         {...containerListeners}
       >
-        <Box
-          sx={{
-            backgroundImage: `url("${image}")`,
-            backgroundSize: "cover",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: "none",
-          }}
-        />
-        <Box
-          sx={{
-            backgroundImage:
-              "linear-gradient(0deg, #ffffff44 30%,  #00000088 100%)",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: "none",
-          }}
-        />
+        {/*<Box*/}
+        {/*  sx={{*/}
+        {/*    backgroundImage:*/}
+        {/*      "linear-gradient(0deg, #ffffff44 30%,  #00000088 100%)",*/}
+        {/*    position: "absolute",*/}
+        {/*    top: 0,*/}
+        {/*    left: 0,*/}
+        {/*    right: 0,*/}
+        {/*    bottom: 0,*/}
+        {/*    pointerEvents: "none",*/}
+        {/*  }}*/}
+        {/*/>*/}
         <Stack
           p={4}
           direction="row"

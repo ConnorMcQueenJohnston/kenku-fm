@@ -18,6 +18,7 @@ import {DisplayItemOption} from "./Home";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/AddCircleRounded";
+import FormControl from "@mui/material/FormControl";
 
 const SoundboardsLink = React.forwardRef<
     HTMLAnchorElement,
@@ -60,7 +61,7 @@ export function SoundboardsContainer({onPlaySound, setSoundboardAddOpen}: Soundb
                 direction="row"
             >
                 <Typography variant="h5" component="div">
-                    <Link color="inherit" underline="none" component={SoundboardsLink}> Soundboards</Link>
+                    <Link color="inherit" underline="hover" component={SoundboardsLink}> Soundboards</Link>
                 </Typography>
                 <Tooltip title="Add Soundboard">
                     <IconButton onClick={() => setSoundboardAddOpen(true)}>
@@ -68,22 +69,18 @@ export function SoundboardsContainer({onPlaySound, setSoundboardAddOpen}: Soundb
                     </IconButton>
                 </Tooltip>
                 <Box sx={{ flexGrow: 1 }} />
-                <Box>Showing:
+                Showing:
+                <FormControl size="small">
                     <Select
-                        labelId="soundBoardDisplayMaxSelectLabel"
                         id="soundBoardDisplayMaxSelect"
                         value={maxNumberOfSoundboardItems.toString()}
-                        label="Max Number of Soundboard Items"
                         onChange={handleSoundboardDisplayOptionClick}
                     >
                         {maxNumberOfPlaylistItemsOptions.map((soundboardOption) => (
                             <MenuItem value={soundboardOption.value}>{soundboardOption.displayName ?? soundboardOption.value}</MenuItem>
                         ))}
                     </Select>
-                </Box>
-                <Link color="inherit" underline="hover" component={SoundboardsLink}>
-                    See All
-                </Link>
+                </FormControl>
             </Stack>
         </CardContent>
         <CardContent>

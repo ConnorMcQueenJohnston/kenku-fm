@@ -23,6 +23,7 @@ import { isBackground, backgrounds } from "../../backgrounds";
 import { startQueue } from "./playlistPlaybackSlice";
 import { useDrop } from "../../common/useDrop";
 import { useNavigate, useParams } from "react-router-dom";
+import {setBackground} from "../../app/appSlice";
 
 type PlaylistProps = {
   onPlay: (track: Track) => void;
@@ -43,6 +44,8 @@ export function Playlist({ onPlay }: PlaylistProps) {
   const image = isBackground(playlist.background)
     ? backgrounds[playlist.background]
     : playlist.background;
+
+  dispatch(setBackground(image));
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
@@ -99,30 +102,6 @@ export function Playlist({ onPlay }: PlaylistProps) {
         }}
         {...containerListeners}
       >
-        <Box
-          sx={{
-            backgroundImage: `url("${image}")`,
-            backgroundSize: "cover",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: "none",
-          }}
-        />
-        <Box
-          sx={{
-            backgroundImage:
-              "linear-gradient(0deg, #ffffff44 30%,  #00000088 100%)",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            pointerEvents: "none",
-          }}
-        />
         <Stack
           p={4}
           direction="row"
