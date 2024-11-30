@@ -35,12 +35,27 @@ import Box from "@mui/material/Box";
 const HomeLink = React.forwardRef<HTMLAnchorElement,
     Omit<RouterLinkProps, "to">>((props, ref) => <RouterLink ref={ref} to="/" {...props} />);
 
+const SoundboardsLink = React.forwardRef<
+    HTMLAnchorElement,
+    Omit<RouterLinkProps, "to">
+    >((props, ref) => <RouterLink ref={ref} to="/soundboards" {...props} />);
+
+const PlaylistsLink = React.forwardRef<
+    HTMLAnchorElement,
+    Omit<RouterLinkProps, "to">
+    >((props, ref) => <RouterLink ref={ref} to="/playlists" {...props} />);
+
+const EventTracksPageLink = React.forwardRef<
+    HTMLAnchorElement,
+    Omit<RouterLinkProps, "to">
+    >((props, ref) => <RouterLink ref={ref} to="/eventTracks" {...props} />);
+
 export function App() {
     const appSelector = useSelector((state: RootState) => state.app);
     const background = appSelector.background ?? null;
 
     const [errorMessage, setErrorMessage] = useState<string>();
-    const [isHome, setIsHome] = useState(true);
+    const [shouldShowBacklight, setShouldShowBacklight] = useState(true);
 
     const handleError = useCallback((message: string) => {
         setErrorMessage(message);
@@ -50,9 +65,10 @@ export function App() {
     const soundboard = useSoundboardPlayback(handleError);
 
     const location = useLocation();
+    const locationsToIgnoreBackingLight: string[] = ['/', '/home', '/soundboards', '/playlists', '/eventTracks'];
 
     useEffect(() => {
-        setIsHome(location.pathname == "/" || location.pathname.includes("home"));
+        setShouldShowBacklight( locationsToIgnoreBackingLight.includes(location.pathname));
     }, [location]);
 
     return (
@@ -64,7 +80,8 @@ export function App() {
                 right: 0,
                 bottom: 0,
                 height: "100%",
-                zIndex: -10000
+                zIndex: -10000,
+                overflowX: "hidden"
             }}>
                 <Box sx={{
                     backgroundImage: `url("${background}")`,
@@ -79,7 +96,7 @@ export function App() {
                 }}>
                 </Box>
 
-                {!isHome &&
+                {!shouldShowBacklight &&
                     <Container sx={{
                         backgroundImage: "linear-gradient(0deg, #ffffff44 300%,  #00000088 100%)",
                         opacity: "70%",
@@ -101,13 +118,13 @@ export function App() {
                         <Link className="top-nav__link" color="inherit" underline="hover" component={HomeLink}>
                             <Chip label="Home"/>
                         </Link>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={HomeLink}>
+                        <Link className="top-nav__link" color="inherit" underline="hover" component={PlaylistsLink}>
                             <Chip label="Playlists"/>
                         </Link>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={HomeLink}>
+                        <Link className="top-nav__link" color="inherit" underline="hover" component={SoundboardsLink}>
                             <Chip label="Soundboards"/>
                         </Link>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={HomeLink}>
+                        <Link className="top-nav__link" color="inherit" underline="hover" component={EventTracksPageLink}>
                             <Chip label="Event Tracks"/>
                         </Link>
                     </Stack>

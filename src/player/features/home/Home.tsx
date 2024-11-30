@@ -55,7 +55,6 @@ export function Home({onPlayTrack, onPlaySound}: HomeProps) {
             />
             <EventTrackAddDialog open={eventTrackAddOpen} onClose={() => setEventTrackAddOpen(false)}
             />
-            <Container sx={{height: "10rem"}}></Container>
         </Container>
     );
 }

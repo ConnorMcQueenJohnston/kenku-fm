@@ -21,6 +21,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {SoundSettings} from "./SoundSettings";
 import {RootState} from "../../app/store";
 import Stack from "@mui/material/Stack";
+import Tooltip from "@mui/material/Tooltip";
 
 type SoundItemProps = {
     id: string;
@@ -55,8 +56,7 @@ export function SoundItem({id, soundboard, onPlay, onStop}: SoundItemProps) {
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const menuOpen = Boolean(anchorEl);
-    const fileName = sound.url.split("/").slice(-1);
-
+    const fileName = sound.url.split("/").slice(-1)[0].replace(/%20/g, " ");
 
     function handleMenuClick(event: React.MouseEvent<HTMLButtonElement>) {
         setAnchorEl(event.currentTarget);
@@ -148,24 +148,32 @@ export function SoundItem({id, soundboard, onPlay, onStop}: SoundItemProps) {
                 }}
             >
                 <CardActionArea
-                    sx={{position: "absolute", left: 0, top: 0, right: 0, bottom: 0}}
+                    sx={{position: "absolute", left: 0, top: 0, right: 0, bottom: 0, zIndex: 0}}
                 />
                 <CardContent>
-                    <Box sx={{display: "flex"}}>
-                        <Stack sx={{flexGrow: 1}}
-                               alignItems="flex-start"
-                               spacing={2}
-                               direction="row" justifyContent="space-between">
-                            <Stack direction="column">
-                                <Typography variant="h5" noWrap sx={{flexGrow: 1}}>
-                                    {sound.title}
-                                </Typography>
-                                <span>
-                                    {fileName}
-                                </span>
+                    <Box>
+                        <Stack
+                            alignItems="flex-start"
+                            direction="row"
+                            justifyContent="space-between">
+
+                            <Stack direction="column" sx={{flex: 1, minWidth: 0}}>
+                                <Tooltip title={sound.title} placement="top">
+                                    <Typography variant="h5" noWrap sx={{zIndex: 1, cursor: "pointer"}}>
+                                        {sound.title}
+                                    </Typography>
+                                </Tooltip>
+                                <Tooltip title={fileName} placement="top">
+                                    <Typography noWrap sx={{zIndex: 1, cursor: "pointer"}}>
+                                        {fileName}
+                                    </Typography>
+                                </Tooltip>
                             </Stack>
 
-                            <IconButton sx={{flexShrink: 0}} onClick={handleMenuClick}>
+                            <IconButton sx={{
+                                minWidth: "2rem",
+                                flexShrink: 0
+                            }} onClick={handleMenuClick}>
                                 <MoreVert/>
                             </IconButton>
                         </Stack>
