@@ -6,8 +6,8 @@ import {SoundboardsContainer} from "./SoundboardsContainer";
 import {PlaylistAdd} from "../playlists/PlaylistAdd";
 import {SoundboardAdd} from "../soundboards/SoundboardAdd";
 import {PlaylistsContainer} from "./PlaylistsContainer";
-import {EventTracksContainer} from "./EventTracksContainer";
-import {EventTrackAddDialog} from "../eventTrack/EventTrackAddDialog";
+import {ScenesContainer} from "./SceneContainer";
+import {SceneAddDialog} from "../scene/SceneAddDialog";
 import {useDispatch} from "react-redux";
 import {resetBackground} from "../../app/appSlice";
 
@@ -27,7 +27,7 @@ export function Home({onPlayTrack, onPlaySound}: HomeProps) {
 
     const [playlistAddOpen, setPlaylistAddOpen] = useState(false);
     const [soundboardAddOpen, setSoundboardAddOpen] = useState(false);
-    const [eventTrackAddOpen, setEventTrackAddOpen] = useState(false);
+    const [SceneAddOpen, setSceneAddOpen] = useState(false);
 
     return (
         <Container
@@ -44,7 +44,7 @@ export function Home({onPlayTrack, onPlaySound}: HomeProps) {
                                 setPlaylistAddOpen={setPlaylistAddOpen}></PlaylistsContainer>
             <SoundboardsContainer onPlaySound={onPlaySound}
                                   setSoundboardAddOpen={setSoundboardAddOpen}></SoundboardsContainer>
-            <EventTracksContainer setEventTrackAddOpen={setEventTrackAddOpen}></EventTracksContainer>
+            <ScenesContainer setSceneAddOpen={setSceneAddOpen}></ScenesContainer>
             <PlaylistAdd
                 open={playlistAddOpen}
                 onClose={() => setPlaylistAddOpen(false)}
@@ -53,7 +53,7 @@ export function Home({onPlayTrack, onPlaySound}: HomeProps) {
                 open={soundboardAddOpen}
                 onClose={() => setSoundboardAddOpen(false)}
             />
-            <EventTrackAddDialog open={eventTrackAddOpen} onClose={() => setEventTrackAddOpen(false)}
+            <SceneAddDialog open={SceneAddOpen} onClose={() => setSceneAddOpen(false)}
             />
         </Container>
     );

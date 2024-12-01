@@ -9,25 +9,25 @@ import { backgrounds, isBackground } from "../../backgrounds";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import {EventTrack} from "./EventTrack";
+import {Scene} from "./Scene";
 
-type EventTrackItemProps = {
-    eventTrack: EventTrack;
+type SceneItemProps = {
+    Scene: Scene;
     onSelect: (id: string) => void;
 };
 
-export function EventTrackItem({
-                                   eventTrack,
+export function SceneItem({
+                                   Scene,
                                    onSelect,
-                               }: EventTrackItemProps) {
-    const eventTracks = useSelector((state: RootState) => state.soundboards);
-    const image = isBackground(eventTrack.background)
-        ? backgrounds[eventTrack.background]
-        : eventTrack.background;
+                               }: SceneItemProps) {
+    const Scenes = useSelector((state: RootState) => state.soundboards);
+    const image = isBackground(Scene.background)
+        ? backgrounds[Scene.background]
+        : Scene.background;
 
     return (
         <Card sx={{ position: "relative" }}>
-            <CardActionArea onClick={() => onSelect(eventTrack.id)}>
+            <CardActionArea onClick={() => onSelect(Scene.id)}>
                 <CardMedia
                     component="img"
                     height="200px"
@@ -61,7 +61,7 @@ export function EventTrackItem({
                 }}
             >
                 <Typography variant="h5" component="div">
-                    {eventTrack.title}
+                    {Scene.title}
                 </Typography>
                 {/*<IconButton*/}
                 {/*    aria-label="shuffle"*/}

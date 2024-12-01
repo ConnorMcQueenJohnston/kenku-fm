@@ -1,4 +1,4 @@
-export function EventTrackAdd() {
+export function SceneAdd() {
     return (
         <></>
     );

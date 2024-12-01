@@ -1,50 +1,50 @@
 import {Record} from "@sinclair/typebox";
-import {EventTrack} from "./EventTrack";
+import {Scene} from "./Scene";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Sound, Soundboard} from "../soundboards/soundboardsSlice";
+import {Soundboard} from "../soundboards/soundboardsSlice";
 
-export interface EventTracksState {
-    eventTracks: {
-        byId: Record<string, EventTrack>,
+export interface ScenesState {
+    scenes: {
+        byId: Record<string, Scene>,
         allIds: string[]
     },
     showNumber: number
 }
 
-const initialState: EventTracksState = {
-    eventTracks: {
+const initialState: ScenesState = {
+    scenes: {
         byId: {},
         allIds: []
     },
     showNumber: 8
 }
 
-export const eventTracksSlice = createSlice({
-        name: "eventTracks",
+export const scenesSlice = createSlice({
+        name: "scenes",
         initialState,
         reducers: {
-            addEventTrack: (state, action: PayloadAction<EventTrack>) => {
-                state.eventTracks.byId[action.payload.id] = action.payload;
-                state.eventTracks.allIds.push(action.payload.id);
+            addScene: (state, action: PayloadAction<Scene>) => {
+                state.scenes.byId[action.payload.id] = action.payload;
+                state.scenes.allIds.push(action.payload.id);
             },
-            removeEventTrack: (state, action: PayloadAction<string>) => {
-                delete state.eventTracks.byId[action.payload];
-                state.eventTracks.allIds = state.eventTracks.allIds.filter(
+            removeScene: (state, action: PayloadAction<string>) => {
+                delete state.scenes.byId[action.payload];
+                state.scenes.allIds = state.scenes.allIds.filter(
                     (id) => id !== action.payload
                 );
             },
-            setEventTrackShowNumber: (
+            setSceneShowNumber: (
                 state,
                 action: PayloadAction<number>
             ) => {
                 state.showNumber = action.payload
             },
-            editEventTrack: (state, action: PayloadAction<Partial<Soundboard>>) => {
+            editScene: (state, action: PayloadAction<Partial<Soundboard>>) => {
                 if (!action.payload.id) {
-                    throw Error("Id needed in editEventTrack payload");
+                    throw Error("Id needed in editScene payload");
                 }
-                state.eventTracks.byId[action.payload.id] = {
-                    ...state.eventTracks.byId[action.payload.id],
+                state.scenes.byId[action.payload.id] = {
+                    ...state.scenes.byId[action.payload.id],
                     ...action.payload,
                 };
             },
@@ -87,14 +87,14 @@ export const eventTracksSlice = createSlice({
             //         ...action.payload,
             //     };
             // },
-            moveEventTrack: (
+            moveScene: (
                 state,
                 action: PayloadAction<{ active: string; over: string }>
             ) => {
-                const oldIndex = state.eventTracks.allIds.indexOf(action.payload.active);
-                const newIndex = state.eventTracks.allIds.indexOf(action.payload.over);
-                state.eventTracks.allIds.splice(oldIndex, 1);
-                state.eventTracks.allIds.splice(newIndex, 0, action.payload.active);
+                const oldIndex = state.scenes.allIds.indexOf(action.payload.active);
+                const newIndex = state.scenes.allIds.indexOf(action.payload.over);
+                state.scenes.allIds.splice(oldIndex, 1);
+                state.scenes.allIds.splice(newIndex, 0, action.payload.active);
             },
         //     moveSound: (
         //         state,
@@ -115,11 +115,11 @@ export const eventTracksSlice = createSlice({
 );
 
 export const {
-    addEventTrack,
-    removeEventTrack,
-    setEventTrackShowNumber,
-    editEventTrack,
-    moveEventTrack
-} = eventTracksSlice.actions;
+    addScene,
+    removeScene,
+    setSceneShowNumber,
+    editScene,
+    moveScene
+} = scenesSlice.actions;
 
-export default eventTracksSlice.reducer;
+export default scenesSlice.reducer;

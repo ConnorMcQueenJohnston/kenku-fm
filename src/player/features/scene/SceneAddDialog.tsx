@@ -9,14 +9,14 @@ import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import {backgrounds} from "../../backgrounds";
 import {useDispatch} from "react-redux";
-import {addEventTrack} from "./eventTracksSlice";
+import {addScene} from "./scenesSlice";
 
-interface EventTrackAddDialogProps {
+interface SceneAddDialogProps {
     open: boolean;
     onClose: () => void;
 }
 
-export function EventTrackAddDialog({open, onClose} : EventTrackAddDialogProps) {
+export function SceneAddDialog({open, onClose} : SceneAddDialogProps) {
     const dispatch = useDispatch();
 
     const [title, setTitle] = useState("");
@@ -36,13 +36,13 @@ export function EventTrackAddDialog({open, onClose} : EventTrackAddDialogProps) 
     function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
         const id = uuid();
-        dispatch(addEventTrack({id, title, background, nodes: {byId: {}, allIds: []}, variables: {byId: {}, allIds: []}}));
+        dispatch(addScene({id, title, background, nodes: {byId: {}, allIds: []}, variables: {byId: {}, allIds: []}}));
         onClose();
     }
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Add Event Track</DialogTitle>
+            <DialogTitle>Add Scene</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     <TextField

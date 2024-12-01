@@ -3,7 +3,7 @@ import playlistsReducer from "../features/playlists/playlistsSlice";
 import soundboardsReducer from "../features/soundboards/soundboardsSlice";
 import playlistPlaybackReducer from "../features/playlists/playlistPlaybackSlice";
 import soundboardPlaybackReducer from "../features/soundboards/soundboardPlaybackSlice";
-import eventTracksReducer from "../features/eventTrack/eventTracksSlice";
+import scenesReducer from "../features/scene/scenesSlice";
 import appReducer from "../app/appSlice";
 
 import {
@@ -14,22 +14,31 @@ import {
   PAUSE,
   PERSIST,
   PURGE,
-  REGISTER,
+  REGISTER, createMigrate,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+
+const migrations: any = {
+  2: (state: RootState): RootState => {
+    return {
+      ...state,
+    }
+  }
+};
 
 const playbackPersistConfig = {
   key: "playback",
   version: 1,
   storage,
   whitelist: ["volume", "muted", "shuffle", "repeat"],
+  // migrate: createMigrate(migrations, { debug: false }),
 };
 
 const rootReducer = combineReducers({
   app: appReducer,
   playlists: playlistsReducer,
   soundboards: soundboardsReducer,
-  eventTracks: eventTracksReducer,
+  scenes: scenesReducer,
   playlistPlayback: persistReducer(
     playbackPersistConfig,
     playlistPlaybackReducer
@@ -41,7 +50,7 @@ const persistConfig = {
   key: "player",
   version: 1,
   storage,
-  whitelist: ["playlists", "soundboards", "eventTracks"],
+  whitelist: ["playlists", "soundboards", "scenes"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

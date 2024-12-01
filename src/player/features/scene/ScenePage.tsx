@@ -1,4 +1,4 @@
-export function EventTrackPage() {
+export function ScenePage() {
     return (
         <></>
     );

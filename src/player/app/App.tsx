@@ -21,7 +21,7 @@ import {Soundboard} from "../features/soundboards/Soundboard";
 import {useSoundboardPlayback} from "../features/soundboards/useSoundboardPlayback";
 import {SoundboardRemote} from "../features/soundboards/SoundboardRemote";
 import {SoundboardPlaybackSync} from "../features/soundboards/SoundboardPlaybackSync";
-import {EventTrackPage} from "../features/eventTrack/EventTrackPage";
+import {ScenePage} from "../features/scene/ScenePage";
 import {Link} from "@mui/material";
 import Container from "@mui/material/Container";
 import Chip from "@mui/material/Chip";
@@ -29,7 +29,7 @@ import Stack from "@mui/material/Stack";
 import {useSelector} from "react-redux";
 import {RootState} from "./store";
 import {useLocation} from "react-router";
-import {EventTrack} from "../features/eventTrack/EventTrack";
+import {Scene} from "../features/scene/Scene";
 import Box from "@mui/material/Box";
 
 const HomeLink = React.forwardRef<HTMLAnchorElement,
@@ -45,10 +45,10 @@ const PlaylistsLink = React.forwardRef<
     Omit<RouterLinkProps, "to">
     >((props, ref) => <RouterLink ref={ref} to="/playlists" {...props} />);
 
-const EventTracksPageLink = React.forwardRef<
+const ScenesPageLink = React.forwardRef<
     HTMLAnchorElement,
     Omit<RouterLinkProps, "to">
-    >((props, ref) => <RouterLink ref={ref} to="/eventTracks" {...props} />);
+    >((props, ref) => <RouterLink ref={ref} to="/scenes" {...props} />);
 
 export function App() {
     const appSelector = useSelector((state: RootState) => state.app);
@@ -65,7 +65,7 @@ export function App() {
     const soundboard = useSoundboardPlayback(handleError);
 
     const location = useLocation();
-    const locationsToIgnoreBackingLight: string[] = ['/', '/home', '/soundboards', '/playlists', '/eventTracks'];
+    const locationsToIgnoreBackingLight: string[] = ['/', '/home', '/soundboards', '/playlists', '/scenes'];
 
     useEffect(() => {
         setShouldShowBacklight( locationsToIgnoreBackingLight.includes(location.pathname));
@@ -124,8 +124,8 @@ export function App() {
                         <Link className="top-nav__link" color="inherit" underline="hover" component={SoundboardsLink}>
                             <Chip label="Soundboards"/>
                         </Link>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={EventTracksPageLink}>
-                            <Chip label="Event Tracks"/>
+                        <Link className="top-nav__link" color="inherit" underline="hover" component={ScenesPageLink}>
+                            <Chip label="Scenes"/>
                         </Link>
                     </Stack>
                 </Container>
@@ -162,12 +162,12 @@ export function App() {
                             }
                         />
                         <Route
-                            path="eventTracks"
-                            element={<EventTrackPage></EventTrackPage>}
+                            path="scenes"
+                            element={<ScenePage></ScenePage>}
                         />
                         <Route
-                            path="eventTracks/:eventTrackId"
-                            element={<EventTrack></EventTrack>}
+                            path="scenes/:sceneId"
+                            element={<Scene></Scene>}
                         />
 
                     </Routes>

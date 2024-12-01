@@ -8,28 +8,28 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 import { useDispatch } from "react-redux";
 import { ImageSelector } from "../../common/ImageSelector";
-import {EventTrack} from "./EventTrack";
-import {editEventTrack} from "./eventTracksSlice";
+import {Scene} from "./Scene";
+import {editScene} from "./scenesSlice";
 
-type EventTrackSettingsProps = {
-    eventTrack: EventTrack;
+type SceneSettingsProps = {
+    scene: Scene;
     open: boolean;
     onClose: () => void;
 };
 
-export function EventTrackSettings({
-                                       eventTrack,
+export function SceneSettings({
+                                       scene,
                                        open,
                                        onClose,
-                                   }: EventTrackSettingsProps) {
+                                   }: SceneSettingsProps) {
     const dispatch = useDispatch();
 
     function handleTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
-        dispatch(editEventTrack({ id: eventTrack.id, title: event.target.value }));
+        dispatch(editScene({ id: scene.id, title: event.target.value }));
     }
 
     function handleBackgroundChange(background: string) {
-        dispatch(editEventTrack({ id: eventTrack.id, background }));
+        dispatch(editScene({ id: scene.id, background }));
     }
 
     function handleSubmit(event: React.FormEvent) {
@@ -39,7 +39,7 @@ export function EventTrackSettings({
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Edit Event Track</DialogTitle>
+            <DialogTitle>Edit Scene</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
                     <TextField
@@ -52,11 +52,11 @@ export function EventTrackSettings({
                         InputLabelProps={{
                             shrink: true,
                         }}
-                        value={eventTrack.title}
+                        value={scene.title}
                         onChange={handleTitleChange}
                     />
                     <ImageSelector
-                        value={eventTrack.background}
+                        value={scene.background}
                         onChange={handleBackgroundChange}
                     />
                 </DialogContent>

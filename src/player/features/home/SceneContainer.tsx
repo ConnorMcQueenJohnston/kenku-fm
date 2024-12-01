@@ -16,39 +16,39 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../app/store";
 import {DisplayItemOption} from "./Home";
 import {SelectChangeEvent} from "@mui/material/Select";
-import {EventTrack} from "../eventTrack/EventTrack";
-import {setEventTrackShowNumber} from "../eventTrack/eventTracksSlice";
-import {EventTrackItem} from "../eventTrack/EventTrackItem";
+import {Scene} from "../scene/Scene";
+import {setSceneShowNumber} from "../scene/scenesSlice";
+import {SceneItem} from "../scene/SceneItem";
 import FormControl from "@mui/material/FormControl";
 
-const EventTracksPageLink = React.forwardRef<
+const ScenesPageLink = React.forwardRef<
     HTMLAnchorElement,
     Omit<RouterLinkProps, "to">
-    >((props, ref) => <RouterLink ref={ref} to="/eventTracks" {...props} />);
+    >((props, ref) => <RouterLink ref={ref} to="/scenes" {...props} />);
 
-type EventTracksContainerProps = {
-    setEventTrackAddOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void;
+type ScenesContainerProps = {
+    setSceneAddOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void;
 };
 
-export function EventTracksContainer ({setEventTrackAddOpen}: EventTracksContainerProps) {
+export function ScenesContainer ({setSceneAddOpen}: ScenesContainerProps) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const eventTracksState = useSelector((state: RootState) => state.eventTracks);
-    const maxNumberOfEventTrackItems = eventTracksState.showNumber ?? 4;
-    const eventTrackItems: EventTrack[] = getEventTrackItems();
+    const scenesState = useSelector((state: RootState) => state.scenes);
+    const maxNumberOfSceneItems = scenesState.showNumber ?? 4;
+    const sceneItems: Scene[] = getSceneItems();
 
     const maxNumberOfPlaylistItemsOptions: DisplayItemOption[] = [{value: 4}, {value: 8}, {value: 16}, {value: 32}, {value: Number.MAX_VALUE, displayName: "all"}];
 
-    const handleEventTrackDisplayOptionClick = (event: SelectChangeEvent) => {
+    const handleSceneDisplayOptionClick = (event: SelectChangeEvent) => {
         const resultNum: number = typeof(event.target.value) == "string" ? 300 : event.target.value;
-        dispatch(setEventTrackShowNumber(resultNum));
+        dispatch(setSceneShowNumber(resultNum));
     }
 
-    function getEventTrackItems() {
-        return eventTracksState.eventTracks.allIds
-            .slice(0, maxNumberOfEventTrackItems)
-            .map((id) => eventTracksState.eventTracks.byId[id]);
+    function getSceneItems() {
+        return scenesState.scenes.allIds
+            .slice(0, maxNumberOfSceneItems)
+            .map((id) => scenesState.scenes.byId[id]);
     }
 
     return (
@@ -61,10 +61,10 @@ export function EventTracksContainer ({setEventTrackAddOpen}: EventTracksContain
                     direction="row"
                 >
                     <Typography variant="h5" component="div">
-                        <Link color="inherit" underline="hover" component={EventTracksPageLink}> Event Tracks</Link>
+                        <Link color="inherit" underline="hover" component={ScenesPageLink}> Scenes</Link>
                     </Typography>
-                    <Tooltip title="Add Event Track">
-                        <IconButton onClick={() => setEventTrackAddOpen(true)}>
+                    <Tooltip title="Add Scene">
+                        <IconButton onClick={() => setSceneAddOpen(true)}>
                             <AddIcon />
                         </IconButton>
                     </Tooltip>
@@ -72,12 +72,12 @@ export function EventTracksContainer ({setEventTrackAddOpen}: EventTracksContain
                     Showing:
                     <FormControl size="small">
                         <Select
-                            id="eventTracksDisplayMaxSelect"
-                            value={maxNumberOfEventTrackItems.toString()}
-                            onChange={handleEventTrackDisplayOptionClick}
+                            id="ScenesDisplayMaxSelect"
+                            value={maxNumberOfSceneItems.toString()}
+                            onChange={handleSceneDisplayOptionClick}
                         >
-                            {maxNumberOfPlaylistItemsOptions.map((eventTrackOption) => (
-                                <MenuItem value={eventTrackOption.value}>{eventTrackOption.displayName ?? eventTrackOption.value}</MenuItem>
+                            {maxNumberOfPlaylistItemsOptions.map((SceneOption) => (
+                                <MenuItem value={SceneOption.value}>{SceneOption.displayName ?? SceneOption.value}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -85,9 +85,9 @@ export function EventTracksContainer ({setEventTrackAddOpen}: EventTracksContain
             </CardContent>
             <CardContent>
                 <Grid container spacing={2}>
-                    {eventTrackItems.map((eventTrack: EventTrack) => (
-                        <Grid xs={6} sm={4} md={3} item key={eventTrack.id}>
-                            <EventTrackItem eventTrack={eventTrack} onSelect={(id) => navigate(`/eventTracks/${id}`)}/>
+                    {sceneItems.map((Scene: Scene) => (
+                        <Grid xs={6} sm={4} md={3} item key={Scene.id}>
+                            <SceneItem Scene={Scene} onSelect={(id) => navigate(`/scenes/${id}`)}/>
                         </Grid>
                     ))}
                 </Grid>

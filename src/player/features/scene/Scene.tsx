@@ -7,7 +7,6 @@ import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import Back from "@mui/icons-material/ChevronLeftRounded";
 import Tooltip from "@mui/material/Tooltip";
-import Add from "@mui/icons-material/AddCircleRounded";
 import MoreVert from "@mui/icons-material/MoreVertRounded";
 import Backdrop from "@mui/material/Backdrop";
 import Menu from "@mui/material/Menu";
@@ -17,8 +16,8 @@ import {backgrounds, isBackground} from "../../backgrounds";
 import {setBackground} from "../../app/appSlice";
 import {Sound} from "../soundboards/soundboardsSlice";
 import {useDrop} from "../../common/useDrop";
-import {removeEventTrack} from "./eventTracksSlice";
-import {EventTrackSettings} from "./EventTrackSettings";
+import {removeScene} from "./scenesSlice";
+import {SceneSettings} from "./SceneSettings";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import {AddOutlined, Album, LibraryMusic, MusicNote} from "@mui/icons-material";
@@ -26,45 +25,45 @@ import {Badge} from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-export interface EventTrack {
+export interface Scene {
     id: string;
     title: string;
     background: string;
     variables: {
-        byId: Record<string, EventTrackVariable>
+        byId: Record<string, SceneVariable>
         allIds: string[]
     },
     nodes: {
-        byId: Record<string, EventTrackNode>
+        byId: Record<string, SceneNode>
         allIds: string[]
     }
 }
 
-export type EventTrackVariableType = "boolean | trigger";
+export type SceneVariableType = "boolean | trigger";
 
-export type EventTrackVariable = {
-    type: EventTrackVariableType;
+export type SceneVariable = {
+    type: SceneVariableType;
 }
 
-export type EventTrackNode = {
+export type SceneNode = {
     id: string;
     title?: string;
 }
 
-export function EventTrack() {
+export function Scene() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {eventTrackId} = useParams();
-    const eventTrack = useSelector(
-        (state: RootState) => state.eventTracks.eventTracks.byId[eventTrackId]
+    const {sceneId} = useParams();
+    const scene = useSelector(
+        (state: RootState) => state.scenes.scenes.byId[sceneId]
     );
 
     const [addOpen, setAddOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
 
-    const image = isBackground(eventTrack.background)
-        ? backgrounds[eventTrack.background]
-        : eventTrack.background;
+    const image = isBackground(scene.background)
+        ? backgrounds[scene.background]
+        : scene.background;
 
     dispatch(setBackground(image));
 
@@ -85,12 +84,12 @@ export function EventTrack() {
     }
 
     function handleCopyID() {
-        navigator.clipboard.writeText(eventTrack.id);
+        navigator.clipboard.writeText(scene.id);
         handleMenuClose();
     }
 
     function handleDelete() {
-        dispatch(removeEventTrack(eventTrack.id));
+        dispatch(removeScene(scene.id));
         navigate(-1);
         handleMenuClose();
     }
@@ -135,7 +134,7 @@ export function EventTrack() {
                         <Back/>
                     </IconButton>
                     <Typography sx={{zIndex: 1, textShadow: "2px 2px #000"}} variant="h3" noWrap>
-                        {eventTrack.title}
+                        {scene.title}
                     </Typography>
                     <Stack direction="row">
                         <Tooltip title="Add Track">
@@ -216,7 +215,7 @@ export function EventTrack() {
                 </Backdrop>
             </Box>
             <Menu
-                id="eventTrack-menu"
+                id="Scene-menu"
                 anchorEl={anchorEl}
                 open={menuOpen}
                 onClose={handleMenuClose}
@@ -228,13 +227,13 @@ export function EventTrack() {
                 <MenuItem onClick={handleCopyID}>Copy ID</MenuItem>
                 <MenuItem onClick={handleDelete}>Delete</MenuItem>
             </Menu>
-            {/*<EventTrackAddDialog*/}
-            {/*    soundboardId={eventTrack.id}*/}
+            {/*<SceneAddDialog*/}
+            {/*    soundboardId={Scene.id}*/}
             {/*    open={addOpen}*/}
             {/*    onClose={() => setAddOpen(false)}*/}
             {/*/>*/}
-            <EventTrackSettings
-                eventTrack={eventTrack}
+            <SceneSettings
+                scene={scene}
                 open={settingsOpen}
                 onClose={() => setSettingsOpen(false)}
             />
