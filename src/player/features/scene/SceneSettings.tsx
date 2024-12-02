@@ -8,8 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 import { useDispatch } from "react-redux";
 import { ImageSelector } from "../../common/ImageSelector";
-import {Scene} from "./Scene";
-import {editScene} from "./scenesSlice";
+import {editScene, Scene} from "./scenesSlice";
 
 type SceneSettingsProps = {
     scene: Scene;

@@ -24,6 +24,8 @@ import { startQueue } from "./playlistPlaybackSlice";
 import { useDrop } from "../../common/useDrop";
 import { useNavigate, useParams } from "react-router-dom";
 import {setBackground} from "../../app/appSlice";
+import {Badge} from "@mui/material";
+import {AddOutlined, LibraryMusic, MusicNote} from "@mui/icons-material";
 
 type PlaylistProps = {
   onPlay: (track: Track) => void;
@@ -118,7 +120,9 @@ export function Playlist({ onPlay }: PlaylistProps) {
           <Stack direction="row">
             <Tooltip title="Add Track">
               <IconButton onClick={() => setAddOpen(true)}>
-                <Add />
+                <Badge badgeContent={<AddOutlined/>}>
+                  <LibraryMusic></LibraryMusic>
+                </Badge>
               </IconButton>
             </Tooltip>
             <IconButton onClick={handleMenuClick}>

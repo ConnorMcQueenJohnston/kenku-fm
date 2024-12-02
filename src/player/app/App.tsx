@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
 
-import styled from "@mui/material/styles/styled";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
@@ -29,8 +28,8 @@ import Stack from "@mui/material/Stack";
 import {useSelector} from "react-redux";
 import {RootState} from "./store";
 import {useLocation} from "react-router";
-import {Scene} from "../features/scene/Scene";
 import Box from "@mui/material/Box";
+import {Scene} from "../features/scene/Scene";
 
 const HomeLink = React.forwardRef<HTMLAnchorElement,
     Omit<RouterLinkProps, "to">>((props, ref) => <RouterLink ref={ref} to="/" {...props} />);

@@ -9,7 +9,7 @@ import { backgrounds, isBackground } from "../../backgrounds";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import {Scene} from "./Scene";
+import {Scene} from "./scenesSlice";
 
 type SceneItemProps = {
     Scene: Scene;

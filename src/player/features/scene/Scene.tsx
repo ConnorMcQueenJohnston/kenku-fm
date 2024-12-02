@@ -1,4 +1,3 @@
-import Container from "@mui/material/Container";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
 import {RootState} from "../../app/store";
@@ -16,39 +15,29 @@ import {backgrounds, isBackground} from "../../backgrounds";
 import {setBackground} from "../../app/appSlice";
 import {Sound} from "../soundboards/soundboardsSlice";
 import {useDrop} from "../../common/useDrop";
-import {removeScene} from "./scenesSlice";
+import {
+    removeScene,
+    ISceneTrack,
+    SceneNode,
+    removeSceneNode,
+    addSceneNode,
+    addSceneVariable,
+    removeSceneVariable, SceneVariable
+} from "./scenesSlice";
+import {SceneTrack} from "./SceneTrack";
 import {SceneSettings} from "./SceneSettings";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import {AddOutlined, Album, LibraryMusic, MusicNote} from "@mui/icons-material";
-import {Badge} from "@mui/material";
+import {AddOutlined, Hub, LibraryMusic, MusicNote, Tune} from "@mui/icons-material";
+import {Badge, Input} from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-
-export interface Scene {
-    id: string;
-    title: string;
-    background: string;
-    variables: {
-        byId: Record<string, SceneVariable>
-        allIds: string[]
-    },
-    nodes: {
-        byId: Record<string, SceneNode>
-        allIds: string[]
-    }
-}
-
-export type SceneVariableType = "boolean | trigger";
-
-export type SceneVariable = {
-    type: SceneVariableType;
-}
-
-export type SceneNode = {
-    id: string;
-    title?: string;
-}
+import {v4 as uuid} from "uuid";
+import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import Chip from "@mui/material/Chip";
 
 export function Scene() {
     const dispatch = useDispatch();
@@ -70,6 +59,17 @@ export function Scene() {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const menuOpen = Boolean(anchorEl);
 
+    const sceneTracks: ISceneTrack[] = [
+        {
+            id: uuid(),
+            title: "First Track"
+        },
+        {
+            id: uuid(),
+            title: "Second Track"
+        }
+    ];
+
     function handleMenuClick(event: React.MouseEvent<HTMLButtonElement>) {
         setAnchorEl(event.currentTarget);
     }
@@ -78,20 +78,37 @@ export function Scene() {
         setAnchorEl(null);
     }
 
-    function handleEdit() {
+    function handleSceneEdit() {
         setSettingsOpen(true);
         handleMenuClose();
     }
 
-    function handleCopyID() {
+    function handleSceneCopyID() {
         navigator.clipboard.writeText(scene.id);
         handleMenuClose();
     }
 
-    function handleDelete() {
+    function handleSceneDelete() {
         dispatch(removeScene(scene.id));
         navigate(-1);
         handleMenuClose();
+    }
+
+    function handleNodeAdd() {
+        dispatch(addSceneNode({sceneId, newNode: {title: "New Node", required: false}}));
+    }
+
+    function handleNodeDelete(node: SceneNode) {
+        if (node.required) return;
+        dispatch(removeSceneNode({sceneId, nodeId: node.id}))
+    }
+
+    function handleVariableAdd() {
+        dispatch(addSceneVariable({sceneId, newSceneVariable: {title: "New Variable", type: "trigger"}}));
+    }
+
+    function handleVariableDelete(variable: SceneVariable) {
+        dispatch(removeSceneVariable({sceneId, variableId: variable.id}))
     }
 
     const {dragging, containerListeners, overlayListeners} = useDrop(
@@ -167,12 +184,52 @@ export function Scene() {
                                 <Stack spacing={2}>
                                     <Card>
                                         <CardContent>
-                                            <Typography variant="h5">Variables</Typography>
+                                            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                                                <Typography variant="h5">Variables</Typography>
+                                                <Stack direction="row">
+                                                    <Tooltip title="Add Variable">
+                                                        <IconButton onClick={() => handleVariableAdd()}>
+                                                            <Badge badgeContent={<AddOutlined/>}>
+                                                                <Tune></Tune>
+                                                            </Badge>
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Stack>
+                                            </Box>
+
+                                            <Stack
+                                                direction="row"
+                                                gap="0.25rem"
+                                            >
+                                                {scene.variables.allIds.map((id: string) =>
+                                                    scene.variables.byId[id]).map((sceneVariable: SceneVariable) =>
+                                                    <Chip label={sceneVariable.title} onDelete={() => handleVariableDelete(sceneVariable)}/>)}
+                                            </Stack>
                                         </CardContent>
                                     </Card>
                                     <Card>
                                         <CardContent>
-                                            <Typography variant="h5">Nodes</Typography>
+                                            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                                                <Typography variant="h5">Nodes</Typography>
+                                                <Stack direction="row">
+                                                    <Tooltip title="Add Node">
+                                                        <IconButton onClick={() => handleNodeAdd()}>
+                                                            <Badge badgeContent={<AddOutlined/>}>
+                                                                <Hub></Hub>
+                                                            </Badge>
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Stack>
+                                            </Box>
+
+                                            <Stack
+                                                direction="row"
+                                                gap="0.25rem"
+                                            >
+                                                {scene.nodes.allIds.slice(0, 2).map((id: string) => scene.nodes.byId[id]).map((sceneNode: SceneNode) => <Chip label={sceneNode.title}/>)}
+                                                {scene.nodes.allIds.slice(2, 1000).map((id: string) => scene.nodes.byId[id]).map((sceneNode: SceneNode) => <Chip label={sceneNode.title} onDelete={() => handleNodeDelete(sceneNode)}/>)}
+                                            </Stack>
+
                                         </CardContent>
                                     </Card>
                                     <Card>
@@ -182,7 +239,28 @@ export function Scene() {
                                     </Card>
                                     <Card>
                                         <CardContent>
-                                            <Typography variant="h5">Track Timeline</Typography>
+                                            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                                                <Typography variant="h5">Track Timeline</Typography>
+                                                <Stack>
+                                                    <FormControl>
+                                                        <InputLabel id="duration-label">Duration</InputLabel>
+                                                        <Input
+                                                            type="number"
+                                                            id="duration-input"
+                                                            endAdornment={<InputAdornment position={"end"}>(milliseconds)</InputAdornment>}
+                                                            defaultValue={0}
+                                                            disableUnderline={true}
+                                                            value={scene.duration}
+                                                        />
+                                                    </FormControl>
+
+                                                </Stack>
+                                            </Box>
+
+                                            <Stack gap="0.5rem">
+                                                {sceneTracks.map((sceneTrack) => <SceneTrack></SceneTrack>)}
+                                            </Stack>
+
                                         </CardContent>
                                     </Card>
                                 </Stack>
@@ -223,15 +301,10 @@ export function Scene() {
                     "aria-labelledby": "more-button",
                 }}
             >
-                <MenuItem onClick={handleEdit}>Edit</MenuItem>
-                <MenuItem onClick={handleCopyID}>Copy ID</MenuItem>
-                <MenuItem onClick={handleDelete}>Delete</MenuItem>
+                <MenuItem onClick={handleSceneEdit}>Edit</MenuItem>
+                <MenuItem onClick={handleSceneCopyID}>Copy ID</MenuItem>
+                <MenuItem onClick={handleSceneDelete}>Delete</MenuItem>
             </Menu>
-            {/*<SceneAddDialog*/}
-            {/*    soundboardId={Scene.id}*/}
-            {/*    open={addOpen}*/}
-            {/*    onClose={() => setAddOpen(false)}*/}
-            {/*/>*/}
             <SceneSettings
                 scene={scene}
                 open={settingsOpen}

@@ -16,8 +16,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../app/store";
 import {DisplayItemOption} from "./Home";
 import {SelectChangeEvent} from "@mui/material/Select";
-import {Scene} from "../scene/Scene";
-import {setSceneShowNumber} from "../scene/scenesSlice";
+import {Scene, setSceneShowNumber} from "../scene/scenesSlice";
 import {SceneItem} from "../scene/SceneItem";
 import FormControl from "@mui/material/FormControl";
 
