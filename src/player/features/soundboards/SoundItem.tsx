@@ -46,7 +46,7 @@ const VolumeSlider = styled(Slider)({
 });
 
 export function SoundItem({id, soundboard, onPlay, onStop}: SoundItemProps) {
-    const sound = useSelector((state: RootState) => state.soundboards.sounds[id]);
+    const sound = useSelector((state: RootState) => state.soundboards.sounds.byId[id]);
     const playing = useSelector(
         (state: RootState) => sound.id in state.soundboardPlayback.playback
     );

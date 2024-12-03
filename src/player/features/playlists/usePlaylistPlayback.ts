@@ -145,7 +145,7 @@ export function usePlaylistPlayback(onError: (message: string) => void) {
           seek(0);
         } else {
           // Play the previous track
-          const previousTrack = playlists.tracks[id];
+          const previousTrack = playlists.tracks.byId[id];
           if (previousTrack) {
             play(previousTrack);
             dispatch(updateQueue(index));
@@ -189,7 +189,7 @@ export function usePlaylistPlayback(onError: (message: string) => void) {
           seek(0);
         } else {
           // Play the next track
-          const nextTrack = playlists.tracks[id];
+          const nextTrack = playlists.tracks.byId[id];
           if (nextTrack) {
             play(nextTrack);
             dispatch(updateQueue(index));
@@ -231,7 +231,7 @@ export function usePlaylistPlayback(onError: (message: string) => void) {
             track?.play();
           } else {
             // Play the next track
-            const nextTrack = playlists.tracks[id];
+            const nextTrack = playlists.tracks.byId[id];
             if (nextTrack) {
               play(nextTrack);
               dispatch(updateQueue(index));

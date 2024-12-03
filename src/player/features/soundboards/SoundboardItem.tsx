@@ -33,7 +33,7 @@ export function SoundboardItem({
     let sounds = [...soundboard.sounds];
     // Play a random sound from the soundboard
     const soundId = sounds[Math.floor(Math.random() * sounds.length)];
-    const sound = soundboards.sounds[soundId];
+    const sound = soundboards.sounds.byId[soundId];
     if (sound) {
       onPlay(sound);
     }

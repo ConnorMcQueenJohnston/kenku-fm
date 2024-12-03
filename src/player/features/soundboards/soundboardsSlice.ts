@@ -1,4 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createDraftSafeSelector, createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {RootState} from "../../app/store";
+import {selectAllTracks, Track} from "../playlists/playlistsSlice";
 
 export interface Sound {
     id: string;
@@ -22,16 +24,54 @@ export interface SoundboardsState {
         byId: Record<string, Soundboard>;
         allIds: string[];
     };
+    sounds: {
+        byId: Record<string, Sound>,
+        allIds: string[];
+    }
+    showNumber: number;
+}
+
+export interface V1SoundboardsState {
+    soundboards: {
+        byId: Record<string, Soundboard>;
+        allIds: string[];
+    };
     sounds: Record<string, Sound>;
     showNumber: number;
 }
+
+export type AudioTypeString = "track" | "sound";
+export type AudioType = Sound | Track;
+// @ts-ignore
+const selectApp = createSelector.withTypes<RootState>();
+export const selectAllSounds = selectApp(
+    [
+        (state: RootState) => state.soundboards
+    ],
+    (soundboards: SoundboardsState) => soundboards.sounds.allIds.map((id: string) => soundboards.sounds.byId[id]));
+export const selectAllAudio = createSelector([
+    selectAllSounds,
+    selectAllTracks,
+],
+    (sounds, tracks) =>
+        [...sounds.map((sound: Sound) => ({...sound, type: "sound"})), ...tracks.map((track: Track) => ({...track, type: "track"}))].sort()
+    );
+
+export const selectAllAudioByAudioIds = (audioIds: string[]) => createSelector([
+    selectAllAudio
+    ],
+    (allAudio: any[]) => allAudio.filter((audio: AudioType) => audioIds.includes(audio.id))
+);
 
 const initialState: SoundboardsState = {
     soundboards: {
         byId: {},
         allIds: [],
     },
-    sounds: {},
+    sounds: {
+        byId: {},
+        allIds: []
+    },
     showNumber: 8
 };
 
@@ -44,8 +84,9 @@ export const soundboardsSlice = createSlice({
             state.soundboards.allIds.push(action.payload.id);
         },
         removeSoundboard: (state, action: PayloadAction<string>) => {
-            for (let sound of state.soundboards.byId[action.payload].sounds) {
-                delete state.sounds[sound];
+            for (let soundId of state.soundboards.byId[action.payload].sounds) {
+                delete state.sounds.byId[soundId];
+                state.sounds.allIds = state.sounds.allIds.filter(id => id !== soundId);
             }
             delete state.soundboards.byId[action.payload];
             state.soundboards.allIds = state.soundboards.allIds.filter(
@@ -73,7 +114,8 @@ export const soundboardsSlice = createSlice({
         ) => {
             const {sound, soundboardId} = action.payload;
             state.soundboards.byId[soundboardId].sounds.unshift(sound.id);
-            state.sounds[sound.id] = sound;
+            state.sounds.byId[sound.id] = sound;
+            state.sounds.allIds.push(sound.id);
         },
         addSounds: (
             state,
@@ -84,7 +126,8 @@ export const soundboardsSlice = createSlice({
                 ...sounds.map((sound) => sound.id)
             );
             for (let sound of sounds) {
-                state.sounds[sound.id] = sound;
+                state.sounds.byId[sound.id] = sound;
+                state.sounds.allIds.push(sound.id);
             }
         },
         removeSound: (
@@ -95,14 +138,15 @@ export const soundboardsSlice = createSlice({
             state.soundboards.byId[soundboardId].sounds = state.soundboards.byId[
                 soundboardId
                 ].sounds.filter((id) => id !== soundId);
-            delete state.sounds[soundId];
+            delete state.sounds.byId[soundId];
+            state.sounds.allIds = state.sounds.allIds.filter(id => id !== soundId);
         },
         editSound: (state, action: PayloadAction<Partial<Sound>>) => {
             if (!action.payload.id) {
                 throw Error("Id needed in editSound payload");
             }
-            state.sounds[action.payload.id] = {
-                ...state.sounds[action.payload.id],
+            state.sounds.byId[action.payload.id] = {
+                ...state.sounds.byId[action.payload.id],
                 ...action.payload,
             };
         },

@@ -52,7 +52,7 @@ export function PlaylistItem({
         ? Math.floor(Math.random() * tracks.length)
         : 0;
       const trackId = tracks[trackIndex];
-      const track = playlists.tracks[trackId];
+      const track = playlists.tracks.byId[trackId];
       if (track) {
         dispatch(startQueue({ tracks, trackId, playlistId: playlist.id }));
         onPlay(track);

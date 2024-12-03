@@ -1,6 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import playlistsReducer from "../features/playlists/playlistsSlice";
-import soundboardsReducer from "../features/soundboards/soundboardsSlice";
+import soundboardsReducer, {
+  Sound,
+  SoundboardsState,
+  V1SoundboardsState
+} from "../features/soundboards/soundboardsSlice";
 import playlistPlaybackReducer from "../features/playlists/playlistPlaybackSlice";
 import soundboardPlaybackReducer from "../features/soundboards/soundboardPlaybackSlice";
 import scenesReducer from "../features/scene/scenesSlice";
@@ -18,13 +22,22 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const migrations: any = {
-  2: (state: RootState): RootState => {
-    return {
-      ...state,
-    }
-  }
-};
+// const migrations: any = {
+//   2: (state: RootState): RootState => {
+//     let oldSoundboardsState = state.soundboards as unknown;
+//     oldSoundboardsState = oldSoundboardsState as V1SoundboardsState;
+//     return {
+//       ...state,
+//       soundboards: {
+//         ...state.soundboards,
+//         sounds: {
+//           byId: oldSoundboardsState.soundboards.sounds,
+//           allIds: Object.keys(oldSoundboardsState.sounds)
+//         }
+//       }
+//     } as SoundboardsState
+//   }
+// };
 
 const playbackPersistConfig = {
   key: "playback",

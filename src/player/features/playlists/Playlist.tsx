@@ -41,7 +41,7 @@ export function Playlist({ onPlay }: PlaylistProps) {
   const [addOpen, setAddOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const items = playlist.tracks.map((id) => playlists.tracks[id]);
+  const items = playlist.tracks.map((id) => playlists.tracks.byId[id]);
 
   const image = isBackground(playlist.background)
     ? backgrounds[playlist.background]
@@ -75,7 +75,7 @@ export function Playlist({ onPlay }: PlaylistProps) {
   }
 
   function handleTrackPlay(trackId: string) {
-    const track = playlists.tracks[trackId];
+    const track = playlists.tracks.byId[trackId];
     if (track) {
       let tracks = [...playlist.tracks];
       dispatch(startQueue({ tracks, trackId, playlistId: playlist.id }));

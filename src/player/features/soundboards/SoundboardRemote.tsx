@@ -19,13 +19,13 @@ export function SoundboardRemote({ onPlay, onStop }: SoundboardRemoteProps) {
       const id = args[0];
 
       if (id in soundboards.sounds) {
-        const sound = soundboards.sounds[id];
+        const sound = soundboards.sounds.byId[id];
         onPlay(sound);
       } else if (id in soundboards.soundboards.byId) {
         const soundboard = soundboards.soundboards.byId[id];
         const sounds = [...soundboard.sounds];
         const soundId = sounds[Math.floor(Math.random() * sounds.length)];
-        const sound = soundboards.sounds[soundId];
+        const sound = soundboards.sounds.byId[soundId];
         if (sound) {
           onPlay(sound);
         }
@@ -69,7 +69,7 @@ export function SoundboardRemote({ onPlay, onStop }: SoundboardRemoteProps) {
         soundboards: soundboards.soundboards.allIds.map(
           (id) => soundboards.soundboards.byId[id]
         ),
-        sounds: Object.values(soundboards.sounds),
+        sounds: Object.values(soundboards.sounds.byId),
       });
     });
   }, [soundboards]);

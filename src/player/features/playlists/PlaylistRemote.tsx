@@ -37,7 +37,7 @@ export function PlaylistRemote({
     window.player.on("PLAYER_REMOTE_PLAYLIST_PLAY", (args) => {
       const id = args[0];
       if (id in playlists.tracks) {
-        const track = playlists.tracks[id];
+        const track = playlists.tracks.byId[id];
         // Find playlist assosiated with this track and start a queue
         for (let playlist of Object.values(playlists.playlists.byId)) {
           const tracks = [...playlist.tracks];
@@ -56,7 +56,7 @@ export function PlaylistRemote({
           ? Math.floor(Math.random() * tracks.length)
           : 0;
         const trackId = tracks[trackIndex];
-        const track = playlists.tracks[trackId];
+        const track = playlists.tracks.byId[trackId];
         if (track) {
           onPlay(track);
           dispatch(startQueue({ tracks, trackId, playlistId: playlist.id }));
@@ -109,7 +109,7 @@ export function PlaylistRemote({
         playlists: playlists.playlists.allIds.map(
           (id) => playlists.playlists.byId[id]
         ),
-        tracks: Object.values(playlists.tracks),
+        tracks: Object.values(playlists.tracks.byId),
       });
     });
 

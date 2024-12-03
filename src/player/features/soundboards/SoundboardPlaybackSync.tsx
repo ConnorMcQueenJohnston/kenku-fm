@@ -18,7 +18,7 @@ export function SoundboardPlaybackSync({
 
   useEffect(() => {
     onSync((id, sound) => {
-      const state = soundboards.sounds[id];
+      const state = soundboards.sounds.byId[id];
       if (state) {
         if (state.volume !== sound.options.volume) {
           sound.volume(state.volume);

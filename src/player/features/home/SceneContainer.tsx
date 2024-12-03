@@ -84,9 +84,9 @@ export function ScenesContainer ({setSceneAddOpen}: ScenesContainerProps) {
             </CardContent>
             <CardContent>
                 <Grid container spacing={2}>
-                    {sceneItems.map((Scene: Scene) => (
-                        <Grid xs={6} sm={4} md={3} item key={Scene.id}>
-                            <SceneItem Scene={Scene} onSelect={(id) => navigate(`/scenes/${id}`)}/>
+                    {sceneItems.map((scene: Scene) => (
+                        <Grid xs={6} sm={4} md={3} item key={scene.id}>
+                            <SceneItem scene={scene} onSelect={(id) => navigate(`/scenes/${id}`)}/>
                         </Grid>
                     ))}
                 </Grid>

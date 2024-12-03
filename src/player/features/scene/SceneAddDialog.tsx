@@ -62,7 +62,8 @@ export function SceneAddDialog({open, onClose}: SceneAddDialogProps) {
             }, sceneTracks: {
                 byId: {},
                 allIds: []
-            }
+            },
+            soundIds: []
         };
     }
 

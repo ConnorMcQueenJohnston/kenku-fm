@@ -1,6 +1,8 @@
 import {Record} from "@sinclair/typebox";
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {v4 as uuid} from "uuid";
+import {RootState} from "../../app/store";
+import {SoundboardsState} from "../soundboards/soundboardsSlice";
 
 export interface Scene {
     id: string;
@@ -18,7 +20,8 @@ export interface Scene {
     sceneTracks: {
         byId: Record<string, ISceneTrack>,
         allIds: string[]
-    }
+    },
+    soundIds: string[]
 }
 
 export type SceneVariableType = "boolean" | "number" | "trigger";
@@ -56,6 +59,10 @@ export interface INewSceneNode extends ISceneIdentifier {
     }
 }
 
+export interface IAddOrRemoveSoundFromScene extends ISceneIdentifier {
+    soundId: string;
+}
+
 export interface INewSceneVariable extends ISceneIdentifier {
     newSceneVariable: {
         title: string;
@@ -78,6 +85,13 @@ const initialState: ScenesState = {
     },
     showNumber: 8
 }
+
+const selectApp = createSelector.withTypes<RootState>();
+export const selectAllSoundIds = (sceneId: string) => selectApp(
+    [
+        (state: RootState) => state.scenes
+    ],
+    (scenes: ScenesState) => scenes.scenes.byId[sceneId].soundIds);
 
 export const scenesSlice = createSlice({
         name: "scenes",
@@ -169,6 +183,16 @@ export const scenesSlice = createSlice({
                 state.scenes.allIds.splice(oldIndex, 1);
                 state.scenes.allIds.splice(newIndex, 0, action.payload.active);
             },
+            addSoundToScene: (state, action: PayloadAction<IAddOrRemoveSoundFromScene>) => {
+                const {soundId, sceneId} = action.payload;
+                if (state.scenes.byId[sceneId].soundIds.includes(soundId)) return;
+                state.scenes.byId[sceneId].soundIds.push(soundId);
+            },
+            removeSoundFromScene: (state, action: PayloadAction<IAddOrRemoveSoundFromScene>) => {
+                const {soundId, sceneId} = action.payload;
+                if (!state.scenes.byId[sceneId].soundIds.includes(soundId)) return;
+                state.scenes.byId[sceneId].soundIds = state.scenes.byId[sceneId].soundIds.filter(id => id !== soundId);
+            }
         }
     }
 );
@@ -178,11 +202,12 @@ export const {
     removeScene,
     setSceneShowNumber,
     editScene,
-    moveScene,
     addSceneNode,
     removeSceneNode,
     addSceneVariable,
-    removeSceneVariable
+    removeSceneVariable,
+    addSoundToScene,
+    removeSoundFromScene
 } = scenesSlice.actions;
 
 export default scenesSlice.reducer;

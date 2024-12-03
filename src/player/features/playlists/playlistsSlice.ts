@@ -1,4 +1,5 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {RootState} from "../../app/store";
 
 export interface Track {
     id: string;
@@ -18,7 +19,10 @@ export interface PlaylistsState {
         byId: Record<string, Playlist>;
         allIds: string[];
     };
-    tracks: Record<string, Track>;
+    tracks: {
+        byId: Record<string, Track>;
+        allIds: string[];
+    }
     showNumber: number;
 }
 
@@ -27,9 +31,21 @@ const initialState: PlaylistsState = {
         byId: {},
         allIds: [],
     },
-    tracks: {},
+    tracks: {
+        byId: {},
+        allIds: []
+    },
     showNumber: 8
 };
+
+// @ts-ignore
+const selectApp = createSelector.withTypes<RootState>();
+export const selectAllTracks = selectApp(
+    [
+        (state: RootState) => state.playlists
+    ],
+    (playlists: PlaylistsState) => playlists.tracks.allIds.map((id: string) => playlists.tracks.byId[id]));
+
 
 export const playlistsSlice = createSlice({
     name: "playlists",
@@ -41,7 +57,8 @@ export const playlistsSlice = createSlice({
         },
         removePlaylist: (state, action: PayloadAction<string>) => {
             for (let track of state.playlists.byId[action.payload].tracks) {
-                delete state.tracks[track];
+                delete state.tracks.byId[track];
+                state.tracks.allIds = state.tracks.allIds.filter(id => id !== track);
             }
             delete state.playlists.byId[action.payload];
             state.playlists.allIds = state.playlists.allIds.filter(
@@ -69,7 +86,8 @@ export const playlistsSlice = createSlice({
         ) => {
             const {track, playlistId} = action.payload;
             state.playlists.byId[playlistId].tracks.unshift(track.id);
-            state.tracks[track.id] = track;
+            state.tracks.byId[track.id] = track;
+            state.tracks.allIds.push(track.id);
         },
         addTracks: (
             state,
@@ -80,7 +98,8 @@ export const playlistsSlice = createSlice({
                 ...tracks.map((track) => track.id)
             );
             for (let track of tracks) {
-                state.tracks[track.id] = track;
+                state.tracks.byId[track.id] = track;
+                state.tracks.allIds.push(track.id)
             }
         },
         removeTrack: (
@@ -91,14 +110,15 @@ export const playlistsSlice = createSlice({
             state.playlists.byId[playlistId].tracks = state.playlists.byId[
                 playlistId
                 ].tracks.filter((id) => id !== trackId);
-            delete state.tracks[trackId];
+            delete state.tracks.byId[trackId];
+            state.tracks.allIds = state.tracks.allIds.filter(id => id !== trackId);
         },
         editTrack: (state, action: PayloadAction<Partial<Track>>) => {
             if (!action.payload.id) {
                 throw Error("Id needed in editTrack payload");
             }
-            state.tracks[action.payload.id] = {
-                ...state.tracks[action.payload.id],
+            state.tracks.byId[action.payload.id] = {
+                ...state.tracks.byId[action.payload.id],
                 ...action.payload,
             };
         },
