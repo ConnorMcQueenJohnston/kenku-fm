@@ -24,13 +24,14 @@ import { TrackItem } from "./TrackItem";
 import { SortableItem } from "../../common/SortableItem";
 
 import { useDispatch } from "react-redux";
-import { Playlist, Track, moveTrack } from "./playlistsSlice";
+import { Playlist, moveSoundInPlaylist} from "./playlistsSlice";
 import { moveQueueIfNeeded } from "./playlistPlaybackSlice";
 
 import { useHideScrollbar } from "../../../renderer/common/useHideScrollbar";
+import {Sound} from "../sound/soundsSlice";
 
 type PlaylistTracksProps = {
-  items: Track[];
+  items: Sound[];
   playlist: Playlist;
   onPlay: (id: string) => void;
 };
@@ -61,7 +62,7 @@ export function PlaylistTracks({
 
     if (active.id !== over.id) {
       dispatch(
-        moveTrack({ playlistId: playlist.id, active: active.id, over: over.id })
+        moveSoundInPlaylist({ playlistId: playlist.id, active: active.id, over: over.id })
       );
       dispatch(
         moveQueueIfNeeded({

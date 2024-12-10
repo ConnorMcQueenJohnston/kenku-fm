@@ -12,7 +12,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormHelperText from "@mui/material/FormHelperText";
 
 import { useDispatch } from "react-redux";
-import { editSound, Sound } from "./soundboardsSlice";
+import { editSound, Sound } from "./soundsSlice";
 import { AudioSelector } from "../../common/AudioSelector";
 
 type SoundSettingsProps = {

@@ -13,38 +13,41 @@ import MenuItem from "@mui/material/MenuItem";
 import Backdrop from "@mui/material/Backdrop";
 
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../app/store";
-import {removeSoundboard, Sound, addSounds} from "./soundboardsSlice";
-import {SoundAdd} from "./SoundAdd";
-import {SoundboardSettings} from "./SoundboardSettings";
-import {SoundboardSounds} from "./SoundboardSounds";
+import {RootState} from "../../app/store/store";
+import {TrackAdd} from "./TrackAdd";
+import {PlaylistSettings} from "./PlaylistSettings";
+import {PlaylistTracks} from "./PlaylistTracks";
 
 import {isBackground, backgrounds} from "../../backgrounds";
+import {startQueue} from "./playlistPlaybackSlice";
 import {useDrop} from "../../common/useDrop";
 import {useNavigate, useParams} from "react-router-dom";
-import {setBackground} from "../../app/appSlice";
+import {setBackground} from "../../app/store/appSlice";
 import {Badge} from "@mui/material";
-import {AddOutlined, MusicNote} from "@mui/icons-material";
+import {AddOutlined, LibraryMusic} from "@mui/icons-material";
+import {selectAllAudioByAudioIds, selectAllSounds, selectSoundById, Sound} from "../sound/soundsSlice";
+import {addSoundsToPlaylist, removePlaylist} from "./playlistsSlice";
 
-type SoundboardProps = {
-    onPlay: (sound: Sound) => void;
-    onStop: (id: string) => void;
+type PlaylistProps = {
+    onPlay: (track: Sound) => void;
 };
 
-export function Soundboard({onPlay, onStop}: SoundboardProps) {
+export function PlaylistComponent({onPlay}: PlaylistProps) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {soundboardId} = useParams();
-    const soundboard = useSelector(
-        (state: RootState) => state.soundboards.soundboards.byId[soundboardId]
-    );
+    const playlists = useSelector((state: RootState) => state.playlists);
+    const {playlistId} = useParams();
+    const playlist = playlists.playlists.byId[playlistId];
+    const allSounds = useSelector(selectAllSounds);
 
     const [addOpen, setAddOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
 
-    const image = isBackground(soundboard.background)
-        ? backgrounds[soundboard.background]
-        : soundboard.background;
+    const items = useSelector(selectAllAudioByAudioIds(playlist.tracks));
+
+    const image = isBackground(playlist.background)
+        ? backgrounds[playlist.background]
+        : playlist.background;
 
     dispatch(setBackground(image));
 
@@ -65,31 +68,32 @@ export function Soundboard({onPlay, onStop}: SoundboardProps) {
     }
 
     function handleCopyID() {
-        navigator.clipboard.writeText(soundboard.id);
+        navigator.clipboard.writeText(playlist.id);
         handleMenuClose();
     }
 
     function handleDelete() {
-        dispatch(removeSoundboard(soundboard.id));
+        dispatch(removePlaylist(playlist.id));
         navigate(-1);
         handleMenuClose();
     }
 
+    function handleTrackPlay(trackId: string) {
+        const track: Sound = allSounds.filter(x => x.id == trackId)[0];
+        if (track) {
+            let tracks = [...playlist.tracks];
+            dispatch(startQueue({tracks, trackId, playlistId}));
+            onPlay(track);
+        }
+    }
+
     const {dragging, containerListeners, overlayListeners} = useDrop(
         (directories) => {
-            const sounds: Sound[] = [];
+            const tracks: string[] = [];
             for (let directory of Object.values(directories)) {
-                sounds.push(
-                    ...directory.audioFiles.map((file) => ({
-                        ...file,
-                        loop: false,
-                        volume: 1,
-                        fadeIn: 100,
-                        fadeOut: 100,
-                    }))
-                );
+                tracks.push(...directory.audioFiles.map(x => x.id));
             }
-            dispatch(addSounds({sounds, soundboardId: soundboard.id}));
+            dispatch(addSoundsToPlaylist({soundIds: tracks, playlistId}));
         }
     );
 
@@ -100,22 +104,10 @@ export function Soundboard({onPlay, onStop}: SoundboardProps) {
                     padding: "0px !important",
                     display: "flex",
                     flexDirection: "column",
-                    height: "100vh"
+                    height: "100vh",
                 }}
                 {...containerListeners}
             >
-                {/*<Box*/}
-                {/*  sx={{*/}
-                {/*    backgroundImage:*/}
-                {/*      "linear-gradient(0deg, #ffffff44 30%,  #00000088 100%)",*/}
-                {/*    position: "absolute",*/}
-                {/*    top: 0,*/}
-                {/*    left: 0,*/}
-                {/*    right: 0,*/}
-                {/*    bottom: 0,*/}
-                {/*    pointerEvents: "none",*/}
-                {/*  }}*/}
-                {/*/>*/}
                 <Stack
                     p={4}
                     direction="row"
@@ -127,13 +119,13 @@ export function Soundboard({onPlay, onStop}: SoundboardProps) {
                         <Back/>
                     </IconButton>
                     <Typography sx={{zIndex: 1}} variant="h3" noWrap>
-                        {soundboard.title}
+                        {playlist.title}
                     </Typography>
                     <Stack direction="row">
-                        <Tooltip title="Add Sound">
+                        <Tooltip title="Add Track">
                             <IconButton onClick={() => setAddOpen(true)}>
                                 <Badge badgeContent={<AddOutlined/>}>
-                                    <MusicNote></MusicNote>
+                                    <LibraryMusic></LibraryMusic>
                                 </Badge>
                             </IconButton>
                         </Tooltip>
@@ -142,10 +134,10 @@ export function Soundboard({onPlay, onStop}: SoundboardProps) {
                         </IconButton>
                     </Stack>
                 </Stack>
-                <SoundboardSounds
-                    soundboard={soundboard}
-                    onPlay={onPlay}
-                    onStop={onStop}
+                <PlaylistTracks
+                    items={items}
+                    playlist={playlist}
+                    onPlay={handleTrackPlay}
                 />
                 <Backdrop
                     open={dragging}
@@ -153,12 +145,12 @@ export function Soundboard({onPlay, onStop}: SoundboardProps) {
                     {...overlayListeners}
                 >
                     <Typography sx={{pointerEvents: "none"}}>
-                        Drop the sounds here...
+                        Drop the tracks here...
                     </Typography>
                 </Backdrop>
             </Container>
             <Menu
-                id="soundboard-menu"
+                id="playlist-menu"
                 anchorEl={anchorEl}
                 open={menuOpen}
                 onClose={handleMenuClose}
@@ -170,13 +162,13 @@ export function Soundboard({onPlay, onStop}: SoundboardProps) {
                 <MenuItem onClick={handleCopyID}>Copy ID</MenuItem>
                 <MenuItem onClick={handleDelete}>Delete</MenuItem>
             </Menu>
-            <SoundAdd
-                soundboardId={soundboard.id}
+            <TrackAdd
+                playlistId={playlist.id}
                 open={addOpen}
                 onClose={() => setAddOpen(false)}
             />
-            <SoundboardSettings
-                soundboard={soundboard}
+            <PlaylistSettings
+                playlist={playlist}
                 open={settingsOpen}
                 onClose={() => setSettingsOpen(false)}
             />

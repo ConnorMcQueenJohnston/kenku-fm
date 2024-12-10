@@ -20,25 +20,26 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { SoundItem } from "./SoundItem";
+import { SoundItem } from "../sound/SoundItem";
 import { SortableItem } from "../../common/SortableItem";
 
 import { useDispatch } from "react-redux";
-import { Soundboard, Sound, moveSound } from "./soundboardsSlice";
+import {Collection, moveSoundInCollection} from "./collectionsSlice";
 
 import { useHideScrollbar } from "../../../renderer/common/useHideScrollbar";
+import {Sound} from "../sound/soundsSlice";
 
-type SoundboardSoundsProps = {
-  soundboard: Soundboard;
+type CollectionSoundsProps = {
+  collection: Collection;
   onPlay: (sound: Sound) => void;
   onStop: (id: string) => void;
 };
 
-export function SoundboardSounds({
-  soundboard,
+export function CollectionSounds({
+  collection,
   onPlay,
   onStop,
-}: SoundboardSoundsProps) {
+}: CollectionSoundsProps) {
   const dispatch = useDispatch();
 
   const pointerSensor = useSensor(PointerSensor, {
@@ -60,8 +61,8 @@ export function SoundboardSounds({
 
     if (active.id !== over.id) {
       dispatch(
-        moveSound({
-          soundboardId: soundboard.id,
+        moveSoundInCollection({
+          collectionId: collection.id,
           active: active.id,
           over: over.id,
         })
@@ -108,15 +109,14 @@ export function SoundboardSounds({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={soundboard.sounds}
+            items={collection.sounds}
             strategy={rectSortingStrategy}
           >
-            {soundboard.sounds.map((id) => (
+            {collection.sounds.map((id) => (
               <Grid item xs={6} sm={6} md={4} lg={3} key={id}>
                 <SortableItem key={id} id={id}>
                   <SoundItem
                     id={id}
-                    soundboard={soundboard}
                     onPlay={onPlay}
                     onStop={onStop}
                   />
@@ -127,7 +127,6 @@ export function SoundboardSounds({
               {dragId ? (
                 <SoundItem
                   id={dragId}
-                  soundboard={soundboard}
                   onPlay={onPlay}
                   onStop={onStop}
                 />

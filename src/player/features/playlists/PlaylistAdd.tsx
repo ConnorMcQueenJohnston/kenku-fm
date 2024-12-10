@@ -9,10 +9,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { v4 as uuid } from "uuid";
 
 import { useDispatch } from "react-redux";
-import { addPlaylist } from "./playlistsSlice";
 
 import { backgrounds } from "../../backgrounds";
 import { ImageSelector } from "../../common/ImageSelector";
+import {addPlaylist} from "./playlistsSlice";
 
 type PlaylistAddProps = {
   open: boolean;

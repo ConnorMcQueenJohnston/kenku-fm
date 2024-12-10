@@ -14,16 +14,17 @@ import FormHelperText from "@mui/material/FormHelperText";
 import { v4 as uuid } from "uuid";
 
 import { useDispatch } from "react-redux";
-import { addSound } from "./soundboardsSlice";
+import { addSound } from "./soundsSlice";
 import { AudioSelector } from "../../common/AudioSelector";
+import {addSoundToCollection} from "../collections/collectionsSlice";
 
 type SoundAddProps = {
-  soundboardId: string;
+  collectionId?: string;
   open: boolean;
   onClose: () => void;
 };
 
-export function SoundAdd({ soundboardId, open, onClose }: SoundAddProps) {
+export function SoundAdd({ collectionId, open, onClose }: SoundAddProps) {
   const dispatch = useDispatch();
 
   const [title, setTitle] = useState("");
@@ -55,12 +56,15 @@ export function SoundAdd({ soundboardId, open, onClose }: SoundAddProps) {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const id = uuid();
-    dispatch(
-      addSound({
-        sound: { id, title, url, loop: false, volume: 1, fadeIn, fadeOut },
-        soundboardId: soundboardId,
+
+    dispatch(addSound({
+        sound: { id, title, url, loop: false, volume: 1, fadeIn, fadeOut }
       })
     );
+
+    if (collectionId) {
+     dispatch(addSoundToCollection({soundId: id, collectionId}));
+    }
     onClose();
   }
 

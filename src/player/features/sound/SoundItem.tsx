@@ -15,17 +15,15 @@ import Typography from "@mui/material/Typography";
 import Slider from "@mui/material/Slider";
 import CardActionArea from "@mui/material/CardActionArea";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
-import {Sound, removeSound, Soundboard, editSound} from "./soundboardsSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {SoundSettings} from "./SoundSettings";
-import {RootState} from "../../app/store";
+import {RootState} from "../../app/store/store";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
+import {editSound, removeSound, selectSoundById, Sound} from "./soundsSlice";
 
 type SoundItemProps = {
     id: string;
-    soundboard: Soundboard;
     onPlay: (sound: Sound) => void;
     onStop: (id: string) => void;
 };
@@ -45,10 +43,10 @@ const VolumeSlider = styled(Slider)({
     },
 });
 
-export function SoundItem({id, soundboard, onPlay, onStop}: SoundItemProps) {
-    const sound = useSelector((state: RootState) => state.soundboards.sounds.byId[id]);
+export function SoundItem({id, onPlay, onStop}: SoundItemProps) {
+    const sound = useSelector(selectSoundById(id));
     const playing = useSelector(
-        (state: RootState) => sound.id in state.soundboardPlayback.playback
+        (state: RootState) => sound.id in state.collectionPlayback.playback
     );
     const dispatch = useDispatch();
 
@@ -77,7 +75,7 @@ export function SoundItem({id, soundboard, onPlay, onStop}: SoundItemProps) {
     }
 
     function handleDelete() {
-        dispatch(removeSound({soundId: sound.id, soundboardId: soundboard.id}));
+        dispatch(removeSound({soundId: sound.id}));
         handleMenuClose();
     }
 
@@ -222,7 +220,7 @@ export function SoundItem({id, soundboard, onPlay, onStop}: SoundItemProps) {
                 )}
             </Card>
             <Menu
-                id="soundboard-menu"
+                id="collection-menu"
                 anchorEl={anchorEl}
                 open={menuOpen}
                 onClose={handleMenuClose}

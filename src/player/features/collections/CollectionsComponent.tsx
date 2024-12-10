@@ -25,21 +25,20 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 
-import { SoundboardItem } from "./SoundboardItem";
+import { CollectionItem } from "./CollectionItem";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 import {
-  moveSoundboard,
-  Sound,
-  addSoundboard,
-  addSounds,
-} from "./soundboardsSlice";
-import { SoundboardAdd } from "./SoundboardAdd";
+  moveCollection,
+  addCollection,
+} from "./collectionsSlice";
+import { CollectionAdd } from "./CollectionAdd";
 import { SortableItem } from "../../common/SortableItem";
 import { useDrop } from "../../common/useDrop";
 import { getRandomBackground } from "../../backgrounds";
 import { useHideScrollbar } from "../../../renderer/common/useHideScrollbar";
 import { useNavigate } from "react-router-dom";
+import {addSounds, Sound} from "../sound/soundsSlice";
 
 const WallPaper = styled("div")({
   position: "absolute",
@@ -52,15 +51,15 @@ const WallPaper = styled("div")({
   zIndex: -1,
 });
 
-type SoundboardProps = {
+type CollectionProps = {
   onPlay: (sound: Sound) => void;
 };
 
-export function Soundboards({ onPlay }: SoundboardProps) {
+export function CollectionsComponent({ onPlay }: CollectionProps) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const soundboards = useSelector(
-    (state: RootState) => state.soundboards.soundboards
+  const collections = useSelector(
+    (state: RootState) => state.collections.collections
   );
 
   const pointerSensor = useSensor(PointerSensor, {
@@ -70,7 +69,7 @@ export function Soundboards({ onPlay }: SoundboardProps) {
 
   const sensors = useSensors(pointerSensor, keyboardSensor);
 
-  const items = soundboards.allIds.map((id) => soundboards.byId[id]);
+  const items = collections.allIds.map((id) => collections.byId[id]);
 
   const [dragId, setDragId] = useState<string | null>(null);
   function handleDragStart(event: DragStartEvent) {
@@ -81,7 +80,7 @@ export function Soundboards({ onPlay }: SoundboardProps) {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      dispatch(moveSoundboard({ active: active.id, over: over.id }));
+      dispatch(moveCollection({ active: active.id, over: over.id }));
     }
 
     setDragId(null);
@@ -96,7 +95,7 @@ export function Soundboards({ onPlay }: SoundboardProps) {
         if (files.length > 0 && directory.path !== "/") {
           const id = uuid();
           dispatch(
-            addSoundboard({
+            addCollection({
               id,
               background: getRandomBackground(),
               title: directory.name,
@@ -111,8 +110,7 @@ export function Soundboards({ onPlay }: SoundboardProps) {
                 volume: 1,
                 fadeIn: 100,
                 fadeOut: 100,
-              })),
-              soundboardId: id,
+              }))
             })
           );
         }
@@ -146,9 +144,9 @@ export function Soundboards({ onPlay }: SoundboardProps) {
             <Back />
           </IconButton>
           <Typography variant="h3" noWrap>
-            Soundboards
+            Collections
           </Typography>
-          <Tooltip title="Add Soundboard">
+          <Tooltip title="Add Collection">
             <IconButton onClick={() => setAddOpen(true)}>
               <AddRounded />
             </IconButton>
@@ -175,12 +173,12 @@ export function Soundboards({ onPlay }: SoundboardProps) {
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={items} strategy={rectSortingStrategy}>
-              {items.map((soundboard) => (
-                <Grid item xs={2} sm={3} md={3} key={soundboard.id}>
-                  <SortableItem id={soundboard.id}>
-                    <SoundboardItem
-                      soundboard={soundboard}
-                      onSelect={(id) => navigate(`/soundboards/${id}`)}
+              {items.map((collection) => (
+                <Grid item xs={2} sm={3} md={3} key={collection.id}>
+                  <SortableItem id={collection.id}>
+                    <CollectionItem
+                      collection={collection}
+                      onSelect={(id) => navigate(`/collections/${id}`)}
                       onPlay={onPlay}
                     />
                   </SortableItem>
@@ -188,8 +186,8 @@ export function Soundboards({ onPlay }: SoundboardProps) {
               ))}
               <DragOverlay>
                 {dragId ? (
-                  <SoundboardItem
-                    soundboard={soundboards.byId[dragId]}
+                  <CollectionItem
+                    collection={collections.byId[dragId]}
                     onSelect={() => {}}
                     onPlay={() => {}}
                   />
@@ -204,11 +202,11 @@ export function Soundboards({ onPlay }: SoundboardProps) {
           {...overlayListeners}
         >
           <Typography sx={{ pointerEvents: "none" }}>
-            Drop the soundboards here...
+            Drop the collections here...
           </Typography>
         </Backdrop>
       </Container>
-      <SoundboardAdd open={addOpen} onClose={() => setAddOpen(false)} />
+      <CollectionAdd open={addOpen} onClose={() => setAddOpen(false)} />
     </>
   );
 }

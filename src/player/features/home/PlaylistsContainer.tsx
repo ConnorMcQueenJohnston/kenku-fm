@@ -14,12 +14,12 @@ import Card from "@mui/material/Card";
 import React from "react";
 import {DisplayItemOption} from "./Home";
 import {SelectChangeEvent} from "@mui/material/Select";
-import {setPlaylistShowNumber} from "../playlists/playlistsSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../app/store";
+import {RootState} from "../../app/store/store";
 import {Link as RouterLink, LinkProps as RouterLinkProps, useNavigate} from "react-router-dom";
-import {Sound} from "../soundboards/soundboardsSlice";
 import FormControl from "@mui/material/FormControl";
+import {Sound} from "../sound/soundsSlice";
+import {setPlaylistShowNumber} from "../playlists/playlistsSlice";
 
 const PlaylistsLink = React.forwardRef<
     HTMLAnchorElement,

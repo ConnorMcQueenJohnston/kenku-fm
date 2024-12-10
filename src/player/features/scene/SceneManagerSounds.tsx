@@ -5,27 +5,24 @@ import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import React, {useCallback, useMemo, useState} from "react";
-import {selectAllAudio} from "../soundboards/soundboardsSlice";
 import {useDispatch, useSelector} from "react-redux";
-import Chip from "@mui/material/Chip";
-import {AgGridReact, CustomCellRendererProps, SharedProps} from "ag-grid-react";
+import {AgGridReact, CustomCellRendererProps,} from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import {
-    ColDef,
-    GridOptions,
     RowSelectedEvent,
-    FirstDataRenderedEvent, RowNode, GridReadyEvent, IRowNode,
+    RowNode
 } from "@ag-grid-community/core";
 import Tooltip from "@mui/material/Tooltip";
 import {addSoundToScene, removeSoundFromScene, Scene, selectAllSoundIds} from "./scenesSlice";
+import {selectAllSounds} from "../sound/soundsSlice";
 
 export function SceneManagerSounds({
                                        setAddSoundsDrawerOpen,
                                        scene
                                    }: { scene: Scene, setAddSoundsDrawerOpen: (open: boolean) => void }) {
     const soundIds: string[] = useSelector(selectAllSoundIds(scene.id))
-    const allAudio = useSelector(selectAllAudio);
+    const allAudio = useSelector(selectAllSounds);
     const dispatch = useDispatch();
 
     const [hasFirstDataRendered, setFirstDataRendered] = useState(false);

@@ -4,16 +4,16 @@ import { FastifyPluginCallback } from "fastify";
 
 import { PlayerManager } from "../../../managers/PlayerManager";
 import { VIEW_ERROR } from "../../";
-import { SoundboardPlaybackReply } from "../../../../types/player";
+import { CollectionPlaybackReply } from "../../../../types/player";
 
-async function waitForPlaybackReply(): Promise<SoundboardPlaybackReply> {
+async function waitForPlaybackReply(): Promise<CollectionPlaybackReply> {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       reject("Request timeout");
     }, 5000);
     ipcMain.once(
       "PLAYER_REMOTE_SOUNDBOARD_PLAYBACK_REPLY",
-      (_: Electron.IpcMainEvent, playback: SoundboardPlaybackReply) => {
+      (_: Electron.IpcMainEvent, playback: CollectionPlaybackReply) => {
         clearTimeout(timeout);
         resolve(playback);
       }

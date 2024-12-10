@@ -34,6 +34,7 @@ import { moveBookmark } from "./bookmarksSlice";
 import { BookmarkListItem } from "./BookmarkListItem";
 import { AddBookmark } from "./AddBookmark";
 import { SortableItem } from "../../common/SortableItem";
+import Typography from "@mui/material/Typography";
 
 export function BookmarkListItems() {
   const dispatch = useDispatch();
@@ -116,7 +117,9 @@ export function BookmarkListItems() {
               </DragOverlay>
             </SortableContext>
           </DndContext>
+          {bookmarks && bookmarks.bookmarks.allIds.length === 0 && <ListItemText sx={{paddingLeft: "2rem"}}><Typography>No Bookmarks.</Typography></ListItemText>}
         </List>
+
       </Collapse>
       <AddBookmark open={addOpen} onClose={() => setAddOpen(false)} />
     </>

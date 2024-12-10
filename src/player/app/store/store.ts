@@ -1,14 +1,13 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import playlistsReducer from "../features/playlists/playlistsSlice";
-import soundboardsReducer, {
-  Sound,
-  SoundboardsState,
-  V1SoundboardsState
-} from "../features/soundboards/soundboardsSlice";
-import playlistPlaybackReducer from "../features/playlists/playlistPlaybackSlice";
-import soundboardPlaybackReducer from "../features/soundboards/soundboardPlaybackSlice";
-import scenesReducer from "../features/scene/scenesSlice";
-import appReducer from "../app/appSlice";
+import playlistsReducer from "../../features/playlists/playlistsSlice";
+import collectionsReducer, {
+  CollectionsState,
+} from "../../features/collections/collectionsSlice";
+import soundsReducer from "../../features/sound/soundsSlice";
+import playlistPlaybackReducer from "../../features/playlists/playlistPlaybackSlice";
+import collectionPlaybackReducer from "../../features/collections/collectionPlaybackSlice";
+import scenesReducer from "../../features/scene/scenesSlice";
+import appReducer from "./appSlice";
 
 import {
   persistStore,
@@ -18,24 +17,24 @@ import {
   PAUSE,
   PERSIST,
   PURGE,
-  REGISTER, createMigrate,
+  REGISTER
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 // const migrations: any = {
 //   2: (state: RootState): RootState => {
-//     let oldSoundboardsState = state.soundboards as unknown;
-//     oldSoundboardsState = oldSoundboardsState as V1SoundboardsState;
+//     let oldCollectionsState = state.collections as unknown;
+//     oldCollectionsState = oldCollectionsState as V1CollectionsState;
 //     return {
 //       ...state,
-//       soundboards: {
-//         ...state.soundboards,
+//       collections: {
+//         ...state.collections,
 //         sounds: {
-//           byId: oldSoundboardsState.soundboards.sounds,
-//           allIds: Object.keys(oldSoundboardsState.sounds)
+//           byId: oldCollectionsState.collections.sounds,
+//           allIds: Object.keys(oldCollectionsState.sounds)
 //         }
 //       }
-//     } as SoundboardsState
+//     } as CollectionsState
 //   }
 // };
 
@@ -50,20 +49,21 @@ const playbackPersistConfig = {
 const rootReducer = combineReducers({
   app: appReducer,
   playlists: playlistsReducer,
-  soundboards: soundboardsReducer,
+  collections: collectionsReducer,
+  sounds: soundsReducer,
   scenes: scenesReducer,
   playlistPlayback: persistReducer(
     playbackPersistConfig,
     playlistPlaybackReducer
   ),
-  soundboardPlayback: soundboardPlaybackReducer,
+  collectionPlayback: collectionPlaybackReducer,
 });
 
 const persistConfig = {
   key: "player",
   version: 1,
   storage,
-  whitelist: ["playlists", "soundboards", "scenes"],
+  whitelist: ["playlists", "collections", "scenes", "sounds"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

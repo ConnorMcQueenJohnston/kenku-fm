@@ -9,9 +9,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import { v4 as uuid } from "uuid";
 
 import { useDispatch } from "react-redux";
-import { addTrack } from "./playlistsSlice";
+import {addSoundToPlaylist} from "./playlistsSlice";
 import { AudioSelector } from "../../common/AudioSelector";
 import { addTrackToQueueIfNeeded } from "./playlistPlaybackSlice";
+import {addSound} from "../sound/soundsSlice";
 
 type TrackAddProps = {
   playlistId: string;
@@ -24,6 +25,7 @@ export function TrackAdd({ playlistId, open, onClose }: TrackAddProps) {
 
   const [title, setTitle] = useState("");
   const [url, setURL] = useState("");
+  const [fadeIn, fadeOut] = [0,0];
 
   useEffect(() => {
     if (!open) {
@@ -39,7 +41,12 @@ export function TrackAdd({ playlistId, open, onClose }: TrackAddProps) {
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const id = uuid();
-    dispatch(addTrack({ track: { id, title, url }, playlistId }));
+
+    dispatch(addSound({
+          sound: { id, title, url, loop: false, volume: 1, fadeIn, fadeOut }
+        })
+    );
+    dispatch(addSoundToPlaylist({ soundId: id, playlistId }));
     dispatch(addTrackToQueueIfNeeded({ playlistId, trackId: id }));
     onClose();
   }

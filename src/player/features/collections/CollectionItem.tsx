@@ -9,31 +9,32 @@ import Box from "@mui/material/Box";
 
 import { backgrounds, isBackground } from "../../backgrounds";
 
-import { Sound, Soundboard } from "./soundboardsSlice";
+import { Collection } from "./collectionsSlice";
 import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
+import {selectSoundById, Sound} from "../sound/soundsSlice";
 
-type SoundboardItemProps = {
-  soundboard: Soundboard;
+type CollectionItemProps = {
+  collection: Collection;
   onSelect: (id: string) => void;
   onPlay: (sound: Sound) => void;
 };
 
-export function SoundboardItem({
-  soundboard,
+export function CollectionItem({
+  collection,
   onSelect,
   onPlay,
-}: SoundboardItemProps) {
-  const soundboards = useSelector((state: RootState) => state.soundboards);
-  const image = isBackground(soundboard.background)
-    ? backgrounds[soundboard.background]
-    : soundboard.background;
+}: CollectionItemProps) {
+  const collections = useSelector((state: RootState) => state.collections);
+  const image = isBackground(collection.background)
+    ? backgrounds[collection.background]
+    : collection.background;
 
   function handleShuffle() {
-    let sounds = [...soundboard.sounds];
-    // Play a random sound from the soundboard
+    let sounds = [...collection.sounds];
+    // Play a random sound from the collection
     const soundId = sounds[Math.floor(Math.random() * sounds.length)];
-    const sound = soundboards.sounds.byId[soundId];
+    const sound = useSelector(selectSoundById(soundId));
     if (sound) {
       onPlay(sound);
     }
@@ -41,7 +42,7 @@ export function SoundboardItem({
 
   return (
     <Card sx={{ position: "relative" }}>
-      <CardActionArea onClick={() => onSelect(soundboard.id)}>
+      <CardActionArea onClick={() => onSelect(collection.id)}>
         <CardMedia
           component="img"
           height="200px"
@@ -75,7 +76,7 @@ export function SoundboardItem({
         }}
       >
         <Typography variant="h5" component="div">
-          {soundboard.title}
+          {collection.title}
         </Typography>
         <IconButton
           aria-label="shuffle"

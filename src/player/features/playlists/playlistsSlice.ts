@@ -1,11 +1,5 @@
 import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {RootState} from "../../app/store";
-
-export interface Track {
-    id: string;
-    url: string;
-    title: string;
-}
+import {RootState} from "../../app/store/store";
 
 export interface Playlist {
     tracks: string[];
@@ -19,10 +13,6 @@ export interface PlaylistsState {
         byId: Record<string, Playlist>;
         allIds: string[];
     };
-    tracks: {
-        byId: Record<string, Track>;
-        allIds: string[];
-    }
     showNumber: number;
 }
 
@@ -31,21 +21,11 @@ const initialState: PlaylistsState = {
         byId: {},
         allIds: [],
     },
-    tracks: {
-        byId: {},
-        allIds: []
-    },
     showNumber: 8
 };
 
 // @ts-ignore
 const selectApp = createSelector.withTypes<RootState>();
-export const selectAllTracks = selectApp(
-    [
-        (state: RootState) => state.playlists
-    ],
-    (playlists: PlaylistsState) => playlists.tracks.allIds.map((id: string) => playlists.tracks.byId[id]));
-
 
 export const playlistsSlice = createSlice({
     name: "playlists",
@@ -56,10 +36,6 @@ export const playlistsSlice = createSlice({
             state.playlists.allIds.push(action.payload.id);
         },
         removePlaylist: (state, action: PayloadAction<string>) => {
-            for (let track of state.playlists.byId[action.payload].tracks) {
-                delete state.tracks.byId[track];
-                state.tracks.allIds = state.tracks.allIds.filter(id => id !== track);
-            }
             delete state.playlists.byId[action.payload];
             state.playlists.allIds = state.playlists.allIds.filter(
                 (id) => id !== action.payload
@@ -80,47 +56,30 @@ export const playlistsSlice = createSlice({
         ) => {
             state.showNumber = action.payload
         },
-        addTrack: (
+        addSoundToPlaylist: (
             state,
-            action: PayloadAction<{ track: Track; playlistId: string }>
+            action: PayloadAction<{ soundId: string; playlistId: string }>
         ) => {
-            const {track, playlistId} = action.payload;
-            state.playlists.byId[playlistId].tracks.unshift(track.id);
-            state.tracks.byId[track.id] = track;
-            state.tracks.allIds.push(track.id);
+            const {soundId, playlistId} = action.payload;
+            state.playlists.byId[playlistId].tracks.unshift(soundId);
         },
-        addTracks: (
+        addSoundsToPlaylist: (
             state,
-            action: PayloadAction<{ tracks: Track[]; playlistId: string }>
+            action: PayloadAction<{ soundIds: string[]; playlistId: string }>
         ) => {
-            const {tracks, playlistId} = action.payload;
+            const {soundIds, playlistId} = action.payload;
             state.playlists.byId[playlistId].tracks.unshift(
-                ...tracks.map((track) => track.id)
+                ...soundIds.map((id) => id)
             );
-            for (let track of tracks) {
-                state.tracks.byId[track.id] = track;
-                state.tracks.allIds.push(track.id)
-            }
         },
-        removeTrack: (
+        removeSoundFromPlaylist: (
             state,
-            action: PayloadAction<{ trackId: string; playlistId: string }>
+            action: PayloadAction<{ soundId: string; playlistId: string }>
         ) => {
-            const {trackId, playlistId} = action.payload;
+            const {soundId, playlistId} = action.payload;
             state.playlists.byId[playlistId].tracks = state.playlists.byId[
                 playlistId
-                ].tracks.filter((id) => id !== trackId);
-            delete state.tracks.byId[trackId];
-            state.tracks.allIds = state.tracks.allIds.filter(id => id !== trackId);
-        },
-        editTrack: (state, action: PayloadAction<Partial<Track>>) => {
-            if (!action.payload.id) {
-                throw Error("Id needed in editTrack payload");
-            }
-            state.tracks.byId[action.payload.id] = {
-                ...state.tracks.byId[action.payload.id],
-                ...action.payload,
-            };
+                ].tracks.filter((id) => id !== soundId);
         },
         movePlaylist: (
             state,
@@ -131,7 +90,7 @@ export const playlistsSlice = createSlice({
             state.playlists.allIds.splice(oldIndex, 1);
             state.playlists.allIds.splice(newIndex, 0, action.payload.active);
         },
-        moveTrack: (
+        moveSoundInPlaylist: (
             state,
             action: PayloadAction<{
                 playlistId: string;
@@ -153,11 +112,10 @@ export const {
     removePlaylist,
     editPlaylist,
     movePlaylist,
-    addTrack,
-    addTracks,
-    removeTrack,
-    editTrack,
-    moveTrack,
+    addSoundToPlaylist,
+    addSoundsToPlaylist,
+    removeSoundFromPlaylist,
+    moveSoundInPlaylist,
     setPlaylistShowNumber,
 } = playlistsSlice.actions;
 

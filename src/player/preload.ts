@@ -2,8 +2,8 @@ import { contextBridge, ipcRenderer } from "electron";
 import {
   PlaylistPlaybackReply,
   PlaylistsReply,
-  SoundboardPlaybackReply,
-  SoundboardsReply,
+  CollectionPlaybackReply,
+  CollectionsReply,
 } from "../types/player";
 
 type Channel =
@@ -58,14 +58,14 @@ const api = {
   playlistPlaybackReply: (playback: PlaylistPlaybackReply) => {
     ipcRenderer.send("PLAYER_REMOTE_PLAYLIST_PLAYBACK_REPLY", playback);
   },
-  soundboardPlaybackReply: (playback: SoundboardPlaybackReply) => {
+  collectionPlaybackReply: (playback: CollectionPlaybackReply) => {
     ipcRenderer.send("PLAYER_REMOTE_SOUNDBOARD_PLAYBACK_REPLY", playback);
   },
   playlistGetAllReply: (playlists: PlaylistsReply) => {
     ipcRenderer.send("PLAYER_REMOTE_PLAYLIST_GET_ALL_REPLY", playlists);
   },
-  soundboardGetAllReply: (soundboards: SoundboardsReply) => {
-    ipcRenderer.send("PLAYER_REMOTE_SOUNDBOARD_GET_ALL_REPLY", soundboards);
+  collectionGetAllReply: (collections: CollectionsReply) => {
+    ipcRenderer.send("PLAYER_REMOTE_SOUNDBOARD_GET_ALL_REPLY", collections);
   },
 };
 

@@ -3,7 +3,7 @@ import React from "react";
 import Paper from "@mui/material/Paper";
 import Container from "@mui/material/Container";
 
-import {SoundboardPlayer} from "./SoundboardPlayer";
+import {CollectionPlayer} from "./CollectionPlayer";
 import {PlaylistPlayer} from "./PlaylistPlayer";
 import {DragHandle} from "@mui/icons-material";
 import Box from "@mui/material/Box";
@@ -12,14 +12,14 @@ type PlayerProps = {
     onPlaylistNext: () => void;
     onPlaylistPrevious: () => void;
     onPlaylistSeek: (to: number) => void;
-    onSoundboardStop: (id: string) => void;
+    onCollectionStop: (id: string) => void;
 };
 
 export function Player({
                            onPlaylistNext,
                            onPlaylistPrevious,
                            onPlaylistSeek,
-                           onSoundboardStop,
+                           onCollectionStop,
                        }: PlayerProps) {
     return (
         <Container
@@ -41,7 +41,7 @@ export function Player({
                     p: 2,
                 }}
             >
-                {/* TODO: Add in Track / Soundboard Player so that soundboards can be grabbed when in playlist view and vice versa.*/}
+                {/* TODO: Add in Track / Collection Player so that collections can be grabbed when in playlist view and vice versa.*/}
                 {/*<Box sx={{*/}
                 {/*    position: "absolute",*/}
                 {/*    display: "flex",*/}
@@ -53,7 +53,7 @@ export function Player({
                 {/*}}>*/}
                 {/*    <DragHandle></DragHandle>*/}
                 {/*</Box>*/}
-                <SoundboardPlayer onSoundboardStop={onSoundboardStop}/>
+                <CollectionPlayer onCollectionStop={onCollectionStop}/>
                 <PlaylistPlayer
                     onPlaylistNext={onPlaylistNext}
                     onPlaylistPrevious={onPlaylistPrevious}

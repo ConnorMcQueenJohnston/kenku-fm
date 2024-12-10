@@ -17,7 +17,7 @@ export interface PlaylistPlaybackReply {
   };
 }
 
-export interface SoundboardPlaybackReply {
+export interface CollectionPlaybackReply {
   sounds: {
     id: string;
     url: string;
@@ -45,8 +45,8 @@ export interface PlaylistsReply {
   }[];
 }
 
-export interface SoundboardsReply {
-  soundboards: {
+export interface CollectionsReply {
+  collections: {
     sounds: string[];
     background: string;
     title: string;

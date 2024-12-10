@@ -1,31 +1,32 @@
 import React, { useEffect } from "react";
 
 import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 
-import { Sound } from "./soundboardsSlice";
+import {selectAllSounds, selectSoundById, Sound} from "../sound/soundsSlice";
 
-type SoundboardRemoteProps = {
+type CollectionRemoteProps = {
   onPlay: (sound: Sound) => void;
   onStop: (id: string) => void;
 };
 
-export function SoundboardRemote({ onPlay, onStop }: SoundboardRemoteProps) {
-  const soundboards = useSelector((state: RootState) => state.soundboards);
-  const playback = useSelector((state: RootState) => state.soundboardPlayback);
+export function CollectionRemote({ onPlay, onStop }: CollectionRemoteProps) {
+  const collections = useSelector((state: RootState) => state.collections);
+  const playback = useSelector((state: RootState) => state.collectionPlayback);
+  const sounds = useSelector(selectAllSounds);
 
   useEffect(() => {
     window.player.on("PLAYER_REMOTE_SOUNDBOARD_PLAY", (args) => {
       const id = args[0];
 
-      if (id in soundboards.sounds) {
-        const sound = soundboards.sounds.byId[id];
+      if (id in sounds) {
+        const sound = useSelector(selectSoundById(id));
         onPlay(sound);
-      } else if (id in soundboards.soundboards.byId) {
-        const soundboard = soundboards.soundboards.byId[id];
-        const sounds = [...soundboard.sounds];
+      } else if (id in collections.collections.byId) {
+        const collection = collections.collections.byId[id];
+        const sounds = [...collection.sounds];
         const soundId = sounds[Math.floor(Math.random() * sounds.length)];
-        const sound = soundboards.sounds.byId[soundId];
+        const sound = useSelector(selectSoundById(soundId));
         if (sound) {
           onPlay(sound);
         }
@@ -35,7 +36,7 @@ export function SoundboardRemote({ onPlay, onStop }: SoundboardRemoteProps) {
     return () => {
       window.player.removeAllListeners("PLAYER_REMOTE_SOUNDBOARD_PLAY");
     };
-  }, [onPlay, soundboards]);
+  }, [onPlay, collections]);
 
   useEffect(() => {
     window.player.on("PLAYER_REMOTE_SOUNDBOARD_STOP", (args) => {
@@ -46,12 +47,12 @@ export function SoundboardRemote({ onPlay, onStop }: SoundboardRemoteProps) {
     return () => {
       window.player.removeAllListeners("PLAYER_REMOTE_SOUNDBOARD_STOP");
     };
-  }, [onPlay, soundboards]);
+  }, [onPlay, collections]);
 
   useEffect(() => {
     window.player.on("PLAYER_REMOTE_SOUNDBOARD_PLAYBACK_REQUEST", () => {
       const sounds = Object.values(playback.playback);
-      window.player.soundboardPlaybackReply({
+      window.player.collectionPlaybackReply({
         sounds,
       });
     });
@@ -65,14 +66,14 @@ export function SoundboardRemote({ onPlay, onStop }: SoundboardRemoteProps) {
 
   useEffect(() => {
     window.player.on("PLAYER_REMOTE_SOUNDBOARD_GET_ALL_REQUEST", () => {
-      window.player.soundboardGetAllReply({
-        soundboards: soundboards.soundboards.allIds.map(
-          (id) => soundboards.soundboards.byId[id]
+      window.player.collectionGetAllReply({
+        collections: collections.collections.allIds.map(
+          (id) => collections.collections.byId[id]
         ),
-        sounds: Object.values(soundboards.sounds.byId),
+        sounds: useSelector(selectAllSounds),
       });
     });
-  }, [soundboards]);
+  }, [collections]);
 
   return <></>;
 }

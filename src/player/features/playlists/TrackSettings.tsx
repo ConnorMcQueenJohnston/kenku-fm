@@ -7,11 +7,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { useDispatch } from "react-redux";
-import { editTrack, Track } from "./playlistsSlice";
 import { AudioSelector } from "../../common/AudioSelector";
+import {editSound, Sound} from "../sound/soundsSlice";
 
 type TrackSettingsProps = {
-  track: Track;
+  track: Sound;
   open: boolean;
   onClose: () => void;
 };
@@ -20,15 +20,15 @@ export function TrackSettings({ track, open, onClose }: TrackSettingsProps) {
   const dispatch = useDispatch();
 
   function handleTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    dispatch(editTrack({ id: track.id, title: event.target.value }));
+    dispatch(editSound({ id: track.id, title: event.target.value }));
   }
 
   function handleTitleStringChange(title: string) {
-    dispatch(editTrack({ id: track.id, title }));
+    dispatch(editSound({ id: track.id, title }));
   }
 
   function handleURLChange(url: string) {
-    dispatch(editTrack({ id: track.id, url }));
+    dispatch(editSound({ id: track.id, url }));
   }
 
   function handleSubmit(event: React.FormEvent) {

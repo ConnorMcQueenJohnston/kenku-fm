@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 
-import { Track } from "./playlistsSlice";
-
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 import {
   playPause,
   repeat,
@@ -12,9 +10,10 @@ import {
   shuffle,
   startQueue,
 } from "./playlistPlaybackSlice";
+import {selectAllSounds, selectSoundById, Sound} from "../sound/soundsSlice";
 
 type PlaylistRemoteProps = {
-  onPlay: (track: Track) => void;
+  onPlay: (track: Sound) => void;
   onSeek: (to: number) => void;
   onNext: () => void;
   onPrevious: () => void;
@@ -36,8 +35,8 @@ export function PlaylistRemote({
   useEffect(() => {
     window.player.on("PLAYER_REMOTE_PLAYLIST_PLAY", (args) => {
       const id = args[0];
-      if (id in playlists.tracks) {
-        const track = playlists.tracks.byId[id];
+      if (id in useSelector(selectAllSounds)) {
+        const track = useSelector(selectSoundById(id));
         // Find playlist assosiated with this track and start a queue
         for (let playlist of Object.values(playlists.playlists.byId)) {
           const tracks = [...playlist.tracks];
@@ -56,7 +55,7 @@ export function PlaylistRemote({
           ? Math.floor(Math.random() * tracks.length)
           : 0;
         const trackId = tracks[trackIndex];
-        const track = playlists.tracks.byId[trackId];
+        const track = useSelector(selectSoundById(trackId));
         if (track) {
           onPlay(track);
           dispatch(startQueue({ tracks, trackId, playlistId: playlist.id }));
@@ -109,7 +108,7 @@ export function PlaylistRemote({
         playlists: playlists.playlists.allIds.map(
           (id) => playlists.playlists.byId[id]
         ),
-        tracks: Object.values(playlists.tracks.byId),
+        tracks: useSelector(selectAllSounds)
       });
     });
 

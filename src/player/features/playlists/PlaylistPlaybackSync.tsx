@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 
 type PlaylistPlaybackSyncProps = {
   onMute: (muted: boolean) => void;

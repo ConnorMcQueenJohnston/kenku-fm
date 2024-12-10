@@ -4,18 +4,18 @@ import { FastifyPluginCallback } from "fastify";
 
 import { PlayerManager } from "../../../managers/PlayerManager";
 import { VIEW_ERROR } from "../..";
-import { SoundboardsReply } from "../../../../types/player";
+import { CollectionsReply } from "../../../../types/player";
 
-async function waitForSoundboardReply(): Promise<SoundboardsReply> {
+async function waitForCollectionReply(): Promise<CollectionsReply> {
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       reject("Request timeout");
     }, 5000);
     ipcMain.once(
       "PLAYER_REMOTE_SOUNDBOARD_GET_ALL_REPLY",
-      (_: Electron.IpcMainEvent, soundboards: SoundboardsReply) => {
+      (_: Electron.IpcMainEvent, collections: CollectionsReply) => {
         clearTimeout(timeout);
-        resolve(soundboards);
+        resolve(collections);
       }
     );
   });
@@ -28,13 +28,13 @@ export const get: (manager: PlayerManager) => FastifyPluginCallback =
       if (view) {
         view.send("PLAYER_REMOTE_SOUNDBOARD_GET_ALL_REQUEST");
         try {
-          const soundboards = await waitForSoundboardReply();
-          reply.status(200).send(soundboards);
+          const collections = await waitForCollectionReply();
+          reply.status(200).send(collections);
         } catch {
           reply.status(408).send({
             statusCode: 408,
             error: "Request Timeout",
-            message: "Unable to retrieve soundboards in a reasonable time",
+            message: "Unable to retrieve collections in a reasonable time",
           });
         }
       } else {

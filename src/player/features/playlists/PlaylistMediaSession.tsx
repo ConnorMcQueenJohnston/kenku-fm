@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 import { playPause } from "./playlistPlaybackSlice";
 
 type PlaylistMediaSessionProps = {

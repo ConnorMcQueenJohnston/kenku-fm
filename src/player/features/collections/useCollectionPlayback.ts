@@ -5,12 +5,12 @@ import {
   playSound,
   updatePlayback,
   stopSound,
-} from "./soundboardPlaybackSlice";
-import { Sound as SoundType } from "./soundboardsSlice";
-import { Sound } from "./Sound";
+} from "./collectionPlaybackSlice";
+import { Sound as SoundType } from "../sound/soundsSlice";
+import { SoundComponent } from "../sound/SoundComponent";
 
-export function useSoundboardPlayback(onError: (message: string) => void) {
-  const soundsRef = useRef<Record<string, Sound>>({});
+export function useCollectionPlayback(onError: (message: string) => void) {
+  const soundsRef = useRef<Record<string, SoundComponent>>({});
   const dispatch = useDispatch();
 
   const play = useCallback(
@@ -20,7 +20,7 @@ export function useSoundboardPlayback(onError: (message: string) => void) {
         delete soundsRef.current[sound.id];
       }
 
-      const playback = new Sound({
+      const playback = new SoundComponent({
         src: sound.url,
         volume: sound.volume,
         fadeIn: sound.fadeIn,
@@ -96,8 +96,8 @@ export function useSoundboardPlayback(onError: (message: string) => void) {
   }, []);
 
   // Sync function for updating the currently playing sounds with the redux store
-  // Used in `SoundboardPlaybackSync`
-  const sync = useCallback((update: (id: string, sound: Sound) => void) => {
+  // Used in `CollectionPlaybackSync`
+  const sync = useCallback((update: (id: string, sound: SoundComponent) => void) => {
     for (let [id, sound] of Object.entries(soundsRef.current)) {
       update(id, sound);
     }

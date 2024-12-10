@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Sound } from "./soundboardsSlice";
+import { Sound } from "../sound/soundsSlice";
 
 export interface SoundPlayback extends Sound {
   progress: number;
@@ -14,8 +14,8 @@ const initialState: PlaylistPlaybackState = {
   playback: {},
 };
 
-export const soundboardPlaybackSlice = createSlice({
-  name: "soundboardPlayback",
+export const collectionPlaybackSlice = createSlice({
+  name: "collectionPlayback",
   initialState,
   reducers: {
     playSound: (
@@ -43,6 +43,6 @@ export const soundboardPlaybackSlice = createSlice({
 });
 
 export const { playSound, stopSound, updatePlayback } =
-  soundboardPlaybackSlice.actions;
+  collectionPlaybackSlice.actions;
 
-export default soundboardPlaybackSlice.reducer;
+export default collectionPlaybackSlice.reducer;

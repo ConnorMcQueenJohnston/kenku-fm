@@ -1,6 +1,6 @@
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate, useParams} from "react-router-dom";
-import {RootState} from "../../app/store";
+import {RootState} from "../../app/store/store";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
@@ -12,8 +12,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import React, {useState} from "react";
 import {backgrounds, isBackground} from "../../backgrounds";
-import {setBackground} from "../../app/appSlice";
-import {AudioType, selectAllAudioByAudioIds, Sound} from "../soundboards/soundboardsSlice";
+import {setBackground} from "../../app/store/appSlice";
+import {AudioType} from "../collections/collectionsSlice";
 import {useDrop} from "../../common/useDrop";
 import {
     removeScene,
@@ -37,6 +37,7 @@ import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import Chip from "@mui/material/Chip";
 import {SceneManagerSounds} from "./SceneManagerSounds";
+import {selectAllAudioByAudioIds, Sound} from "../sound/soundsSlice";
 
 export function Scene() {
     const dispatch = useDispatch();
@@ -45,7 +46,7 @@ export function Scene() {
     const scene: Scene = useSelector(
         (state: RootState) => state.scenes.scenes.byId[sceneId]
     );
-    const allSoundsById = useSelector(selectAllAudioByAudioIds(scene.soundIds));
+    const allSoundsById: Sound[] = useSelector(selectAllAudioByAudioIds(scene.soundIds));
 
     const [addOpen, setAddOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
@@ -142,7 +143,7 @@ export function Scene() {
                     }))
                 );
             }
-            // dispatch(addSounds({ sounds, soundboardId: soundboard.id }));
+            // dispatch(addSounds({ sounds, collectionId: collection.id }));
         }
     );
 

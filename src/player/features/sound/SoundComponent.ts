@@ -21,7 +21,7 @@ type SoundOptions = {
  * If cross fading is disabled then HTML5 audio won't be used
  * this increases the memory usage but allows for perfect loops.
  */
-export class Sound extends TypedEmitter<SoundEvents> {
+export class SoundComponent extends TypedEmitter<SoundEvents> {
   options: SoundOptions;
   /** Timeout that controls the cross-fade */
   _timeout: NodeJS.Timeout;

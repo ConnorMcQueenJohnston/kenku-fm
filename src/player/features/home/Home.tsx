@@ -1,18 +1,17 @@
 import React, {useState} from "react";
 import Container from "@mui/material/Container";
-import {Track} from "../playlists/playlistsSlice";
-import {Sound} from "../soundboards/soundboardsSlice";
-import {SoundboardsContainer} from "./SoundboardsContainer";
+import {CollectionsContainer} from "./CollectionsContainer";
 import {PlaylistAdd} from "../playlists/PlaylistAdd";
-import {SoundboardAdd} from "../soundboards/SoundboardAdd";
+import {CollectionAdd} from "../collections/CollectionAdd";
 import {PlaylistsContainer} from "./PlaylistsContainer";
 import {ScenesContainer} from "./SceneContainer";
 import {SceneAddDialog} from "../scene/SceneAddDialog";
 import {useDispatch} from "react-redux";
-import {resetBackground} from "../../app/appSlice";
+import {resetBackground} from "../../app/store/appSlice";
+import {Sound} from "../sound/soundsSlice";
 
 type HomeProps = {
-    onPlayTrack: (track: Track) => void;
+    onPlayTrack: (track: Sound) => void;
     onPlaySound: (sound: Sound) => void;
 };
 
@@ -26,7 +25,7 @@ export function Home({onPlayTrack, onPlaySound}: HomeProps) {
     dispatch(resetBackground());
 
     const [playlistAddOpen, setPlaylistAddOpen] = useState(false);
-    const [soundboardAddOpen, setSoundboardAddOpen] = useState(false);
+    const [collectionAddOpen, setCollectionAddOpen] = useState(false);
     const [SceneAddOpen, setSceneAddOpen] = useState(false);
 
     return (
@@ -42,16 +41,16 @@ export function Home({onPlayTrack, onPlaySound}: HomeProps) {
         >
             <PlaylistsContainer onPlayTrack={onPlayTrack}
                                 setPlaylistAddOpen={setPlaylistAddOpen}></PlaylistsContainer>
-            <SoundboardsContainer onPlaySound={onPlaySound}
-                                  setSoundboardAddOpen={setSoundboardAddOpen}></SoundboardsContainer>
+            <CollectionsContainer onPlaySound={onPlaySound}
+                                  setCollectionAddOpen={setCollectionAddOpen}></CollectionsContainer>
             <ScenesContainer setSceneAddOpen={setSceneAddOpen}></ScenesContainer>
             <PlaylistAdd
                 open={playlistAddOpen}
                 onClose={() => setPlaylistAddOpen(false)}
             />
-            <SoundboardAdd
-                open={soundboardAddOpen}
-                onClose={() => setSoundboardAddOpen(false)}
+            <CollectionAdd
+                open={collectionAddOpen}
+                onClose={() => setCollectionAddOpen(false)}
             />
             <SceneAddDialog open={SceneAddOpen} onClose={() => setSceneAddOpen(false)}
             />

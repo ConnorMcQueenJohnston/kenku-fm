@@ -11,14 +11,15 @@ import MoreVert from "@mui/icons-material/MoreVertRounded";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-import { Track, removeTrack, Playlist } from "./playlistsSlice";
+import {Playlist, removeSoundFromPlaylist} from "./playlistsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { TrackSettings } from "./TrackSettings";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 import { playPause } from "./playlistPlaybackSlice";
+import {Sound} from "../sound/soundsSlice";
 
 type TrackItemProps = {
-  track: Track;
+  track: Sound;
   playlist: Playlist;
   onPlay: (id: string) => void;
 };
@@ -36,6 +37,7 @@ export function TrackItem({ track, playlist, onPlay }: TrackItemProps) {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
+
   function handleMenuClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
   }
@@ -54,7 +56,7 @@ export function TrackItem({ track, playlist, onPlay }: TrackItemProps) {
   }
 
   function handleDelete() {
-    dispatch(removeTrack({ trackId: track.id, playlistId: playlist.id }));
+    dispatch(removeSoundFromPlaylist({ soundId: track.id, playlistId: playlist.id }));
     handleMenuClose();
   }
 

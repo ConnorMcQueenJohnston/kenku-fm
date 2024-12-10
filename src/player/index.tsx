@@ -10,7 +10,7 @@ import {PersistGate} from "redux-persist/integration/react";
 
 import {App} from "./app/App";
 import {theme} from "../renderer/app/theme";
-import {store, persistor} from "./app/store";
+import {store, persistor} from "./app/store/store";
 import {MemoryRouter} from "react-router-dom";
 import {StrictMode} from "react";
 

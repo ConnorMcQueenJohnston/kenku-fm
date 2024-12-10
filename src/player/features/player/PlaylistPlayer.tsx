@@ -19,7 +19,7 @@ import Previous from "@mui/icons-material/SkipPreviousRounded";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 import {
   adjustVolume,
   playPause,
@@ -138,7 +138,7 @@ function Controls({
     dispatch(playPause(!playing));
   }
 
-  function handlRepeat() {
+  function handleRepeat() {
     switch (playbackRepeat) {
       case "off":
         dispatch(repeat("playlist"));
@@ -195,7 +195,7 @@ function Controls({
       >
         <Next />
       </IconButton>
-      <IconButton aria-label={`repeat ${playbackRepeat}`} onClick={handlRepeat}>
+      <IconButton aria-label={`repeat ${playbackRepeat}`} onClick={handleRepeat}>
         {playbackRepeat === "off" ? (
           <RepeatIcon />
         ) : playbackRepeat === "playlist" ? (

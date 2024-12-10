@@ -27,15 +27,15 @@ import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 
 import { PlaylistItem } from "./PlaylistItem";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
-import { movePlaylist, Track, addPlaylist, addTracks } from "./playlistsSlice";
+import { RootState } from "../../app/store/store";
+import {addPlaylist, addSoundsToPlaylist, movePlaylist} from "./playlistsSlice";
 import { PlaylistAdd } from "./PlaylistAdd";
 import { SortableItem } from "../../common/SortableItem";
-import { startQueue } from "./playlistPlaybackSlice";
 import { useDrop } from "../../common/useDrop";
 import { getRandomBackground } from "../../backgrounds";
 import { useHideScrollbar } from "../../../renderer/common/useHideScrollbar";
 import { useNavigate } from "react-router-dom";
+import {Sound} from "../sound/soundsSlice";
 
 const WallPaper = styled("div")({
   position: "absolute",
@@ -49,7 +49,7 @@ const WallPaper = styled("div")({
 });
 
 type PlaylistsProps = {
-  onPlay: (track: Track) => void;
+  onPlay: (track: Sound) => void;
 };
 
 export function Playlists({ onPlay }: PlaylistsProps) {
@@ -99,7 +99,7 @@ export function Playlists({ onPlay }: PlaylistsProps) {
               tracks: [],
             })
           );
-          dispatch(addTracks({ tracks: files, playlistId: id }));
+          dispatch(addSoundsToPlaylist({ soundIds: files.map(file => file.id), playlistId: id }));
         }
       }
     }

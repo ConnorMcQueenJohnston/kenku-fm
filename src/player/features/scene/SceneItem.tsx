@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import {backgrounds, isBackground} from "../../backgrounds";
 
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../app/store";
+import {RootState} from "../../app/store/store";
 import {removeScene, Scene} from "./scenesSlice";
 import CardContent from "@mui/material/CardContent";
 import Stack from "@mui/material/Stack";
@@ -17,8 +17,6 @@ import IconButton from "@mui/material/IconButton";
 import MoreVert from "@mui/icons-material/MoreVertRounded";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import {SoundSettings} from "../soundboards/SoundSettings";
-import {removeSound} from "../soundboards/soundboardsSlice";
 import {SceneSettings} from "./SceneSettings";
 import {Fade} from "@mui/material";
 
@@ -141,7 +139,7 @@ export function SceneItem({
             </Box>
 
             <Menu
-                id="soundboard-menu"
+                id="collection-menu"
                 anchorEl={anchorEl}
                 open={menuOpen}
                 onClose={handleMenuClose}

@@ -7,28 +7,28 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import { useDispatch } from "react-redux";
-import { editSoundboard, Soundboard } from "./soundboardsSlice";
+import { editCollection, Collection } from "./collectionsSlice";
 import { ImageSelector } from "../../common/ImageSelector";
 
-type SoundboardSettingsProps = {
-  soundboard: Soundboard;
+type CollectionSettingsProps = {
+  collection: Collection;
   open: boolean;
   onClose: () => void;
 };
 
-export function SoundboardSettings({
-  soundboard,
+export function CollectionSettings({
+  collection,
   open,
   onClose,
-}: SoundboardSettingsProps) {
+}: CollectionSettingsProps) {
   const dispatch = useDispatch();
 
   function handleTitleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    dispatch(editSoundboard({ id: soundboard.id, title: event.target.value }));
+    dispatch(editCollection({ id: collection.id, title: event.target.value }));
   }
 
   function handleBackgroundChange(background: string) {
-    dispatch(editSoundboard({ id: soundboard.id, background }));
+    dispatch(editCollection({ id: collection.id, background }));
   }
 
   function handleSubmit(event: React.FormEvent) {
@@ -38,7 +38,7 @@ export function SoundboardSettings({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Edit Soundboard</DialogTitle>
+      <DialogTitle>Edit Collection</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <TextField
@@ -51,11 +51,11 @@ export function SoundboardSettings({
             InputLabelProps={{
               shrink: true,
             }}
-            value={soundboard.title}
+            value={collection.title}
             onChange={handleTitleChange}
           />
           <ImageSelector
-            value={soundboard.background}
+            value={collection.background}
             onChange={handleBackgroundChange}
           />
         </DialogContent>

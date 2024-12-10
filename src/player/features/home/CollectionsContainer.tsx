@@ -7,48 +7,49 @@ import Box from "@mui/material/Box";
 import {Select} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Grid from "@mui/material/Grid";
-import {SoundboardItem} from "../soundboards/SoundboardItem";
+import {CollectionItem} from "../collections/CollectionItem";
 import React from "react";
 import {Link as RouterLink, LinkProps as RouterLinkProps, useNavigate} from "react-router-dom";
 import {SelectChangeEvent} from "@mui/material/Select";
-import {setSoundboardShowNumber, Sound} from "../soundboards/soundboardsSlice";
+import {setCollectionShowNumber} from "../collections/collectionsSlice";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../app/store";
+import {RootState} from "../../app/store/store";
 import {DisplayItemOption} from "./Home";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/AddCircleRounded";
 import FormControl from "@mui/material/FormControl";
+import {Sound} from "../sound/soundsSlice";
 
-const SoundboardsLink = React.forwardRef<
+const CollectionsLink = React.forwardRef<
     HTMLAnchorElement,
     Omit<RouterLinkProps, "to">
-    >((props, ref) => <RouterLink ref={ref} to="/soundboards" {...props} />);
+    >((props, ref) => <RouterLink ref={ref} to="/collections" {...props} />);
 
-type SoundboardsContainerProps = {
+type CollectionsContainerProps = {
     onPlaySound: (sound: Sound) => void;
-    setSoundboardAddOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void
+    setCollectionAddOpen: (value: (((prevState: boolean) => boolean) | boolean)) => void
 };
 
-export function SoundboardsContainer({onPlaySound, setSoundboardAddOpen}: SoundboardsContainerProps) {
+export function CollectionsContainer({onPlaySound, setCollectionAddOpen}: CollectionsContainerProps) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const soundboardsState = useSelector((state: RootState) => state.soundboards);
-    const maxNumberOfSoundboardItems = soundboardsState.showNumber ?? 4;
-    const soundboardItems = getSoundBoardItems();
+    const collectionsState = useSelector((state: RootState) => state.collections);
+    const maxNumberOfCollectionItems = collectionsState.showNumber ?? 4;
+    const collectionItems = getSoundBoardItems();
 
     const maxNumberOfPlaylistItemsOptions: DisplayItemOption[] = [{value: 4}, {value: 8}, {value: 16}, {value: 32}, {value: Number.MAX_VALUE, displayName: "all"}];
 
-    const handleSoundboardDisplayOptionClick = (event: SelectChangeEvent) => {
+    const handleCollectionDisplayOptionClick = (event: SelectChangeEvent) => {
         const resultNum: number = typeof(event.target.value) == "string" ? 300 : event.target.value;
-        dispatch(setSoundboardShowNumber(resultNum));
+        dispatch(setCollectionShowNumber(resultNum));
     }
 
     function getSoundBoardItems() {
-        return soundboardsState.soundboards.allIds
-            .slice(0, maxNumberOfSoundboardItems)
-            .map((id) => soundboardsState.soundboards.byId[id]);
+        return collectionsState.collections.allIds
+            .slice(0, maxNumberOfCollectionItems)
+            .map((id) => collectionsState.collections.byId[id]);
     }
 
     return (
@@ -61,10 +62,10 @@ export function SoundboardsContainer({onPlaySound, setSoundboardAddOpen}: Soundb
                 direction="row"
             >
                 <Typography variant="h5" component="div">
-                    <Link color="inherit" underline="hover" component={SoundboardsLink}> Soundboards</Link>
+                    <Link color="inherit" underline="hover" component={CollectionsLink}> Collections</Link>
                 </Typography>
-                <Tooltip title="Add Soundboard">
-                    <IconButton onClick={() => setSoundboardAddOpen(true)}>
+                <Tooltip title="Add Collection">
+                    <IconButton onClick={() => setCollectionAddOpen(true)}>
                         <AddIcon />
                     </IconButton>
                 </Tooltip>
@@ -73,11 +74,11 @@ export function SoundboardsContainer({onPlaySound, setSoundboardAddOpen}: Soundb
                 <FormControl size="small">
                     <Select
                         id="soundBoardDisplayMaxSelect"
-                        value={maxNumberOfSoundboardItems.toString()}
-                        onChange={handleSoundboardDisplayOptionClick}
+                        value={maxNumberOfCollectionItems.toString()}
+                        onChange={handleCollectionDisplayOptionClick}
                     >
-                        {maxNumberOfPlaylistItemsOptions.map((soundboardOption) => (
-                            <MenuItem value={soundboardOption.value}>{soundboardOption.displayName ?? soundboardOption.value}</MenuItem>
+                        {maxNumberOfPlaylistItemsOptions.map((collectionOption) => (
+                            <MenuItem value={collectionOption.value}>{collectionOption.displayName ?? collectionOption.value}</MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -85,11 +86,11 @@ export function SoundboardsContainer({onPlaySound, setSoundboardAddOpen}: Soundb
         </CardContent>
         <CardContent>
             <Grid container spacing={2}>
-                {soundboardItems.map((soundboard) => (
-                    <Grid xs={6} sm={4} md={3} item key={soundboard.id}>
-                        <SoundboardItem
-                            soundboard={soundboard}
-                            onSelect={(id) => navigate(`/soundboards/${id}`)}
+                {collectionItems.map((collection) => (
+                    <Grid xs={6} sm={4} md={3} item key={collection.id}>
+                        <CollectionItem
+                            collection={collection}
+                            onSelect={(id) => navigate(`/collections/${id}`)}
                             onPlay={onPlaySound}
                         />
                     </Grid>

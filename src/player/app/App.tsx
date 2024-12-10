@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
-import {Routes, Route, LinkProps as RouterLinkProps, Link as RouterLink} from "react-router-dom";
+import {Routes, Route} from "react-router-dom";
 
 import {Player} from "../features/player/Player";
 import {usePlaylistPlayback} from "../features/playlists/usePlaylistPlayback";
@@ -11,45 +11,30 @@ import {PlaylistMediaSession} from "../features/playlists/PlaylistMediaSession";
 import {PlaylistRemote} from "../features/playlists/PlaylistRemote";
 import {PlaylistPlaybackSync} from "../features/playlists/PlaylistPlaybackSync";
 import {Playlists} from "../features/playlists/Playlists";
-import {Playlist} from "../features/playlists/Playlist";
+import {PlaylistComponent} from "../features/playlists/PlaylistComponent";
 
 import "../../renderer/app/App.css";
 import {Home} from "../features/home/Home";
-import {Soundboards} from "../features/soundboards/Soundboards";
-import {Soundboard} from "../features/soundboards/Soundboard";
-import {useSoundboardPlayback} from "../features/soundboards/useSoundboardPlayback";
-import {SoundboardRemote} from "../features/soundboards/SoundboardRemote";
-import {SoundboardPlaybackSync} from "../features/soundboards/SoundboardPlaybackSync";
+import {CollectionsComponent} from "../features/collections/CollectionsComponent";
+import {CollectionComponent} from "../features/collections/CollectionComponent";
+import {useCollectionPlayback} from "../features/collections/useCollectionPlayback";
+import {CollectionRemote} from "../features/collections/CollectionRemote";
+import {CollectionPlaybackSync} from "../features/collections/CollectionPlaybackSync";
 import {ScenePage} from "../features/scene/ScenePage";
-import {Link} from "@mui/material";
 import Container from "@mui/material/Container";
-import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
-import {useSelector} from "react-redux";
-import {RootState} from "./store";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "./store/store";
 import {useLocation} from "react-router";
 import Box from "@mui/material/Box";
 import {Scene} from "../features/scene/Scene";
-
-const HomeLink = React.forwardRef<HTMLAnchorElement,
-    Omit<RouterLinkProps, "to">>((props, ref) => <RouterLink ref={ref} to="/" {...props} />);
-
-const SoundboardsLink = React.forwardRef<
-    HTMLAnchorElement,
-    Omit<RouterLinkProps, "to">
-    >((props, ref) => <RouterLink ref={ref} to="/soundboards" {...props} />);
-
-const PlaylistsLink = React.forwardRef<
-    HTMLAnchorElement,
-    Omit<RouterLinkProps, "to">
-    >((props, ref) => <RouterLink ref={ref} to="/playlists" {...props} />);
-
-const ScenesPageLink = React.forwardRef<
-    HTMLAnchorElement,
-    Omit<RouterLinkProps, "to">
-    >((props, ref) => <RouterLink ref={ref} to="/scenes" {...props} />);
+import {TopNav} from "../navigation/TopNav";
+import {SoundAdd} from "../features/sound/SoundAdd";
+import {selectIsAddSoundPanelOpen, setAddSoundPanelOpen} from "./store/appSlice";
+import {SwipeableDrawer} from "@mui/material";
+import {SceneManagerSounds} from "../features/scene/SceneManagerSounds";
 
 export function App() {
+    const dispatch = useDispatch();
     const appSelector = useSelector((state: RootState) => state.app);
     const background = appSelector.background ?? null;
 
@@ -61,10 +46,16 @@ export function App() {
     }, []);
 
     const playlist = usePlaylistPlayback(handleError);
-    const soundboard = useSoundboardPlayback(handleError);
+    const collection = useCollectionPlayback(handleError);
 
     const location = useLocation();
-    const locationsToIgnoreBackingLight: string[] = ['/', '/home', '/soundboards', '/playlists', '/scenes'];
+    const locationsToIgnoreBackingLight: string[] = ['/', '/home', '/collections', '/playlists', '/scenes'];
+
+    const addSoundOpen = useSelector(selectIsAddSoundPanelOpen);
+
+    function setAddSoundOpen(open: boolean) {
+        dispatch(setAddSoundPanelOpen(open));
+    }
 
     useEffect(() => {
         setShouldShowBacklight( locationsToIgnoreBackingLight.includes(location.pathname));
@@ -110,24 +101,8 @@ export function App() {
                     }}>
                     </Container>
                 }
-                <Container sx={{
-                    padding: "1rem 0",
-                }}>
-                    <Stack direction="row" spacing={1}>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={HomeLink}>
-                            <Chip label="Home"/>
-                        </Link>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={PlaylistsLink}>
-                            <Chip label="Playlists"/>
-                        </Link>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={SoundboardsLink}>
-                            <Chip label="Soundboards"/>
-                        </Link>
-                        <Link className="top-nav__link" color="inherit" underline="hover" component={ScenesPageLink}>
-                            <Chip label="Scenes"/>
-                        </Link>
-                    </Stack>
-                </Container>
+
+                <TopNav></TopNav>
 
                 <Box sx={
                     {
@@ -139,7 +114,7 @@ export function App() {
                         <Route
                             path="/"
                             element={
-                                <Home onPlayTrack={playlist.play} onPlaySound={soundboard.play}/>
+                                <Home onPlayTrack={playlist.play} onPlaySound={collection.play}/>
                             }
                         />
                         <Route
@@ -148,16 +123,16 @@ export function App() {
                         />
                         <Route
                             path="playlists/:playlistId"
-                            element={<Playlist onPlay={playlist.play}/>}
+                            element={<PlaylistComponent onPlay={playlist.play}/>}
                         />
                         <Route
-                            path="soundboards"
-                            element={<Soundboards onPlay={soundboard.play}/>}
+                            path="collections"
+                            element={<CollectionsComponent onPlay={collection.play}/>}
                         />
                         <Route
-                            path="soundboards/:soundboardId"
+                            path="collections/:collectionId"
                             element={
-                                <Soundboard onPlay={soundboard.play} onStop={soundboard.stop}/>
+                                <CollectionComponent onPlay={collection.play} onStop={collection.stop}/>
                             }
                         />
                         <Route
@@ -170,11 +145,17 @@ export function App() {
                         />
 
                     </Routes>
+
+                    <SoundAdd
+                        open={addSoundOpen}
+                        onClose={() => setAddSoundOpen(false)}
+                    />
+
                     <Player
                         onPlaylistSeek={playlist.seek}
                         onPlaylistNext={playlist.next}
                         onPlaylistPrevious={playlist.previous}
-                        onSoundboardStop={soundboard.stop}
+                        onCollectionStop={collection.stop}
                     />
                     <PlaylistMediaSession
                         onSeek={playlist.seek}
@@ -193,8 +174,8 @@ export function App() {
                         onPauseResume={playlist.pauseResume}
                         onVolume={playlist.volume}
                     />
-                    <SoundboardRemote onPlay={soundboard.play} onStop={soundboard.stop}/>
-                    <SoundboardPlaybackSync onSync={soundboard.sync}/>
+                    <CollectionRemote onPlay={collection.play} onStop={collection.stop}/>
+                    <CollectionPlaybackSync onSync={collection.sync}/>
                     <Snackbar
                         open={Boolean(errorMessage)}
                         autoHideDuration={4000}

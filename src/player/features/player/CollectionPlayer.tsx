@@ -7,8 +7,8 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Chip from "@mui/material/Chip";
 
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
-import { stopSound } from "../soundboards/soundboardPlaybackSlice";
+import { RootState } from "../../app/store/store";
+import { stopSound } from "../collections/collectionPlaybackSlice";
 
 const SoundProgress = styled(LinearProgress)({
   height: 32,
@@ -23,22 +23,22 @@ const SoundProgress = styled(LinearProgress)({
   },
 });
 
-type SoundboardPlayerProps = {
-  onSoundboardStop: (id: string) => void;
+type CollectionPlayerProps = {
+  onCollectionStop: (id: string) => void;
 };
 
-export function SoundboardPlayer({ onSoundboardStop }: SoundboardPlayerProps) {
+export function CollectionPlayer({ onCollectionStop }: CollectionPlayerProps) {
   const dispatch = useDispatch();
-  const soundboardPlayback = useSelector(
-    (state: RootState) => state.soundboardPlayback
+  const collectionPlayback = useSelector(
+    (state: RootState) => state.collectionPlayback
   );
 
-  function handleSoundboardStop(id: string) {
+  function handleCollectionStop(id: string) {
     dispatch(stopSound(id));
-    onSoundboardStop(id);
+    onCollectionStop(id);
   }
 
-  const sounds = Object.values(soundboardPlayback.playback);
+  const sounds = Object.values(collectionPlayback.playback);
 
   if (sounds.length === 0) {
     return null;
@@ -54,7 +54,7 @@ export function SoundboardPlayer({ onSoundboardStop }: SoundboardPlayerProps) {
           />
           <Chip
             label={sound.title}
-            onDelete={() => handleSoundboardStop(sound.id)}
+            onDelete={() => handleCollectionStop(sound.id)}
           />
         </Box>
       ))}

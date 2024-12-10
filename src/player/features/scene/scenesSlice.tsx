@@ -1,8 +1,8 @@
 import {Record} from "@sinclair/typebox";
 import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {v4 as uuid} from "uuid";
-import {RootState} from "../../app/store";
-import {SoundboardsState} from "../soundboards/soundboardsSlice";
+import {RootState} from "../../app/store/store";
+import {CollectionsState} from "../collections/collectionsSlice";
 
 export interface Scene {
     id: string;

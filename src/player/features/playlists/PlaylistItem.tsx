@@ -10,15 +10,16 @@ import Box from "@mui/material/Box";
 
 import { backgrounds, isBackground } from "../../backgrounds";
 
-import { Playlist, Track } from "./playlistsSlice";
+import { Playlist} from "./playlistsSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 import { playPause, startQueue } from "./playlistPlaybackSlice";
+import {selectAllSounds, Sound} from "../sound/soundsSlice";
 
 type PlaylistItemProps = {
   playlist: Playlist;
   onSelect: (id: string) => void;
-  onPlay: (track: Track) => void;
+  onPlay: (track: Sound) => void;
 };
 
 export function PlaylistItem({
@@ -26,7 +27,6 @@ export function PlaylistItem({
   onSelect,
   onPlay,
 }: PlaylistItemProps) {
-  const playlists = useSelector((state: RootState) => state.playlists);
   const playing = useSelector(
     (state: RootState) =>
       state.playlistPlayback.playing &&
@@ -36,6 +36,7 @@ export function PlaylistItem({
   const shuffle = useSelector(
     (state: RootState) => state.playlistPlayback.shuffle
   );
+  const allSounds = useSelector(selectAllSounds);
 
   const dispatch = useDispatch();
 
@@ -52,7 +53,7 @@ export function PlaylistItem({
         ? Math.floor(Math.random() * tracks.length)
         : 0;
       const trackId = tracks[trackIndex];
-      const track = playlists.tracks.byId[trackId];
+      const track: Sound = allSounds.filter(x => x.id == trackId)[0];
       if (track) {
         dispatch(startQueue({ tracks, trackId, playlistId: playlist.id }));
         onPlay(track);

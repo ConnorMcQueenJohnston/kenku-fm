@@ -13,7 +13,7 @@ import Card from "@mui/material/Card";
 import React from "react";
 import {Link as RouterLink, LinkProps as RouterLinkProps, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../app/store";
+import {RootState} from "../../app/store/store";
 import {DisplayItemOption} from "./Home";
 import {SelectChangeEvent} from "@mui/material/Select";
 import {Scene, setSceneShowNumber} from "../scene/scenesSlice";
